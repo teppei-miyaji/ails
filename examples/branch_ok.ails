@@ -1,0 +1,17 @@
+module demo.branch_ok
+
+func keep
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    if false then
+    begin
+        let y: i32 = 1
+    end
+    else
+    begin
+        let z: i32 = 2
+    end
+    return x
+end

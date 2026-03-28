@@ -1,0 +1,18 @@
+module demo.branch_state_mismatch
+
+func bad
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    if true then
+    begin
+        let y: own i32 = x
+        return y
+    end
+    else
+    begin
+        let z: i32 = 0
+    end
+    return x
+end

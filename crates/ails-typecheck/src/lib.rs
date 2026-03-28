@@ -68,6 +68,9 @@ pub enum TypeCheckError {
 
     #[error("cannot update `{name}` while it is borrowed as `view` in function `{function}`")]
     UpdateWhileBorrowed { function: String, name: String },
+
+    #[error("ownership state mismatch across branches for `{name}` in function `{function}`")]
+    BranchStateMismatch { function: String, name: String },
 }
 
 pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
@@ -214,6 +217,11 @@ fn check_stmt(
             let mut else_locals = locals.clone();
             let then_returns = check_block(then_body, &mut then_locals, function_name, ret_ty, funcs)?;
             let else_returns = check_block(else_body, &mut else_locals, function_name, ret_ty, funcs)?;
+
+            if !then_returns || !else_returns {
+                merge_branch_states(locals, &then_locals, &else_locals, function_name)?;
+            }
+
             Ok(then_returns && else_returns)
         }
         Stmt::While { cond, body } => {
@@ -230,6 +238,41 @@ fn check_stmt(
         }
         Stmt::Match { scrutinee, arms } => check_match(scrutinee, arms, locals, function_name, ret_ty, funcs),
     }
+}
+
+fn merge_branch_states(
+    base: &mut BTreeMap<String, LocalState>,
+    then_locals: &BTreeMap<String, LocalState>,
+    else_locals: &BTreeMap<String, LocalState>,
+    function_name: &str,
+) -> Result<(), TypeCheckError> {
+    for (name, base_state) in base.iter_mut() {
+        let then_state = then_locals.get(name).ok_or_else(|| TypeCheckError::BranchStateMismatch {
+            function: function_name.to_string(),
+            name: name.clone(),
+        })?;
+        let else_state = else_locals.get(name).ok_or_else(|| TypeCheckError::BranchStateMismatch {
+            function: function_name.to_string(),
+            name: name.clone(),
+        })?;
+
+        if then_state.moved != else_state.moved {
+            return Err(TypeCheckError::BranchStateMismatch {
+                function: function_name.to_string(),
+                name: name.clone(),
+            });
+        }
+        if then_state.borrowed_view_count != else_state.borrowed_view_count {
+            return Err(TypeCheckError::BranchStateMismatch {
+                function: function_name.to_string(),
+                name: name.clone(),
+            });
+        }
+
+        base_state.moved = then_state.moved;
+        base_state.borrowed_view_count = then_state.borrowed_view_count;
+    }
+    Ok(())
 }
 
 fn check_match(

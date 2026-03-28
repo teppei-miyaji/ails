@@ -13,20 +13,19 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 78%
-- Ownership-aware type system: 36%
+- Front-end baseline: 80%
+- Ownership-aware type system: 44%
 - HIR/MIR pipeline: 12%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 49%**
+**Overall: 53%**
 
 ## Current work item
 
 Current work item definition:
-- add `let` / `set`
-- reject update while borrowed
-- prepare next ownership-control-flow slice
+- add if-branch ownership state checking
+- reject mismatched moved state across branches
 
 **Current work item: 100%**

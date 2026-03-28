@@ -60,6 +60,7 @@ Type checker support currently includes:
 - first borrow generation for `view` call arguments
 - move-while-borrowed rejection
 - first borrow/update conflict rejection
+- first branch ownership-state checking
 
 ## Not implemented yet
 

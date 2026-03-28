@@ -36,3 +36,8 @@
 - Add AST nodes for local binding and reassignment
 - Add local symbol insertion in type checker
 - Add first borrow/update conflict rejection
+
+## 0.1.0-draft-v0.11
+- Add first ownership-state merge check across `if` branches
+- Reject mismatched moved state across branches
+- Reject mismatched borrow count across branches

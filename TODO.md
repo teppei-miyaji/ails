@@ -33,13 +33,15 @@ Public draft repository with:
 - [x] Add move-while-borrowed rejection
 - [x] Add `let` / `set`
 - [x] Add first borrow/update conflict rejection
+- [x] Add first branch ownership-state checking
 - [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Generalize `match` to named sum types
-- [ ] Add lexical state merge rules for ownership across branches
+- [ ] Refine branch merge rules beyond exact equality
+- [ ] Add loop-state ownership checking
 
 ### P2
 - [ ] Lower AST into non-placeholder HIR
