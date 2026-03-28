@@ -12,6 +12,7 @@ Public draft repository with:
 - CLI driver
 - canonical spec draft set
 - review-ready spec milestone
+- implementation transition pack
 - `import`
 - `type`
 - `case`
@@ -46,13 +47,13 @@ Public draft repository with:
 - [x] Add placement-class to control-flow drop responsibility mapping
 - [x] Add standard remediation patterns for forbidden partial move diagnostics
 - [x] Define single-drop property as abstract validation goal
-- [ ] Obtain external review for v0.20 canonical spec
+- [x] Add implementation transition pack
+- [ ] Obtain external review for v0.21 implementation transition pack
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology
+- [ ] Implement MIR structural validation pass
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
-- [ ] Refine branch merge rules beyond exact equality
-- [ ] Refine loop merge rules beyond exact equality
-- [ ] Add drop insertion pass
+- [ ] Add drop insertion pass skeleton
 - [ ] Add MIR validation pass implementation

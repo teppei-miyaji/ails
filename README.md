@@ -147,3 +147,8 @@ v0.19 formalizes payload-less scrutinee consumption, left-to-right call evaluati
 ## v0.20 review focus
 
 v0.20 formalizes nested-call borrow legality, placement-class drop responsibility mapping, forbidden partial-move remediation guidance, and the single-drop validation goal.
+
+
+## v0.21 implementation transition
+
+v0.21 adds an implementation-transition pack for alignment, MIR validation design, single-drop planning, diagnostics remediation, and backend handoff staging.

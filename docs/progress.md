@@ -18,17 +18,18 @@
 - Canonical spec set: 94%
 - Ownership-aware type system: 74%
 - HIR/MIR pipeline: 63%
+- Implementation transition readiness: 82%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 92%**
+**Overall: 94%**
 
 ## Current work item
 
 Current work item definition:
-- close nested-call borrow ambiguity
-- close placement-class responsibility ambiguity
-- make diagnostics and validation goals concrete enough for next-stage implementation
+- convert settled spec into implementation-ready planning artifacts
+- define validator, diagnostics, and backend staging
+- prepare transition from spec closure to executable compiler work
 
 **Current work item: 100%**

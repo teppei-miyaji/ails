@@ -93,3 +93,10 @@
 - Add standard remediation patterns for forbidden partial-move diagnostics
 - Define single-drop property as an abstract MIR validation goal
 - Add repository-local Gemini review prompt for v0.20 spec review
+
+## 0.1.0-draft-v0.21
+- Add implementation transition pack for spec-to-implementation work
+- Add MIR validator design draft
+- Add single-drop property implementation plan
+- Add diagnostics remediation catalog
+- Add backend handoff draft and v0.21 implementation review prompt
