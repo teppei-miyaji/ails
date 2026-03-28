@@ -167,3 +167,8 @@ v0.23 adds the first code starter for MIR structural validation, together with f
 ## v0.24 validator wiring
 
 v0.24 adds a wiring plan for the first executable MIR structural validation path and separates valid source fixtures from invalid Rust-constructed MIR tests.
+
+
+## v0.25 driver wiring
+
+v0.25 adds a draft `validate-mir-structure` path in `ails-driver` and documents the first executable validation flow.

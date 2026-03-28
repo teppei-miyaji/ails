@@ -16,6 +16,7 @@ Public draft repository with:
 - MIR structural validator starter pack
 - draft MIR structural validator code
 - validator wiring pack
+- draft driver validation path
 - `import`
 - `type`
 - `case`
@@ -37,9 +38,10 @@ Public draft repository with:
 ### P0
 - [x] Add draft MIR structural validator code
 - [x] Add validator wiring pack
-- [ ] Wire validator into an executable/testable path
-- [ ] Add canonical valid source-driven MIR fixtures
+- [x] Add draft driver validation path
+- [ ] Verify build integration locally
 - [ ] Add Rust-side invalid MIR constructor tests
+- [ ] Add canonical valid source-driven MIR validation checks
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology

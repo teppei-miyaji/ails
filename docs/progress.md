@@ -17,19 +17,19 @@
 - Front-end baseline: 100%
 - Canonical spec set: 94%
 - Ownership-aware type system: 74%
-- HIR/MIR pipeline: 78%
-- Implementation transition readiness: 94%
+- HIR/MIR pipeline: 82%
+- Implementation transition readiness: 95%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 97%**
+**Overall: 98%**
 
 ## Current work item
 
 Current work item definition:
-- prepare the first executable validator path
-- define fixture split for valid vs invalid cases
-- reduce ambiguity before code wiring
+- add the first executable-style validator entry path
+- connect driver to MIR validation flow
+- prepare for local verification and invalid test construction
 
 **Current work item: 100%**

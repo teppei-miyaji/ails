@@ -117,3 +117,8 @@
 - Add validator wiring plan for first executable MIR structural validation path
 - Add fixture strategy separating valid source fixtures from invalid Rust-constructed MIR tests
 - Add initial valid source fixture files and repository-local Gemini review prompt for v0.24 wiring
+
+## 0.1.0-draft-v0.25
+- Add draft `validate-mir-structure` flow in `ails-driver`
+- Add documentation for first executable validation path and suggested test commands
+- Add repository-local Gemini review prompt for the v0.25 driver wiring draft
