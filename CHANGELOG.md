@@ -68,3 +68,9 @@
 - Add canonical spec set under `spec/`
 - Split language, grammar, type system, ownership, join rules, pattern matching, HIR, MIR, diagnostics, and AI authoring guidance
 - Mark spec as source of truth over implementation when they diverge
+
+## 0.1.0-draft-v0.17
+- Canonicalize expression-scoped borrow lifetime for `view` call arguments
+- Canonicalize move-binding payload semantics for by-value pattern matching
+- Add abstract named sum layout document
+- Add implementation mapping and MIR validation requirements

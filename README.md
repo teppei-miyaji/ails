@@ -127,3 +127,8 @@ These files are intended to make incremental public GitHub work easier to manage
 
 The repository now includes a canonical spec draft under `spec/`.
 This spec set should be treated as the source of truth when implementation and docs diverge.
+
+
+## Reviewable spec milestone
+
+The repository now contains a reviewable canonical spec milestone under `spec/`, including ownership payload semantics, call-borrow lifetime, named sum abstract layout, MIR validation requirements, and implementation mapping.

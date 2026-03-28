@@ -1,10 +1,27 @@
 # AILS Language Specification
 
-## Purpose
+## 1. Purpose
 
-AILS is an AI-oriented low-level safe language for deterministic parsing, explicit ownership, explicit control-flow semantics, and future lowering into HIR/MIR and machine backends.
+AILS is an AI-oriented low-level safe language.
+It is designed for:
+- deterministic parsing
+- explicit ownership
+- explicit control-flow semantics
+- implementation-friendly lowering into HIR and MIR
+- future backend targeting for x86_64 and AArch64
 
-## Top-level declarations
+AILS is not Rust syntax.
+It only borrows some safety goals and ownership terminology.
+
+## 2. Design principles
+
+- Syntax must be easy for both humans and LLMs to emit correctly.
+- Semantics must prefer explicitness over convenience.
+- Ownership transfer must be visible in source-level reasoning.
+- Control-flow joins must have explicit safety rules.
+- Parser, typechecker, HIR, and MIR must each have distinct responsibilities.
+
+## 3. Top-level declarations
 
 A module may contain, in this order:
 - `module`
@@ -13,8 +30,9 @@ A module may contain, in this order:
 - zero or more `const`
 - zero or more `func`
 
-## Statements
+## 4. Statements
 
+Current statement set:
 - `let`
 - `set`
 - `return`
@@ -22,16 +40,18 @@ A module may contain, in this order:
 - `while`
 - `match`
 
-## Expressions
+## 5. Expressions
 
+Current expression set:
 - identifiers
 - integer literals
 - boolean literals
 - function calls
 - binary operations
 
-## Types
+## 6. Types
 
+Current type constructors:
 - primitive types
 - named types
 - `own T`
@@ -39,11 +59,21 @@ A module may contain, in this order:
 - `option T`
 - `result T E`
 
-## Safety model
+## 7. Canonical unresolved items
+
+The following are acknowledged but not fully complete:
+- borrow-binding payload patterns
+- multi-field pattern destructuring
+- named sum runtime layout details beyond abstract discriminant+payload model
+- backend ABI mapping
+
+They must remain explicit TODO items, not implicit implementation choices.
+
+## 8. Safety model
 
 The language safety model depends on:
-- `ownership.md`
-- `control-flow-join.md`
-- `pattern-matching.md`
+- ownership rules in `ownership.md`
+- join rules in `control-flow-join.md`
+- pattern binding rules in `pattern-matching.md`
 
 No implementation is allowed to silently invent additional ownership behavior not described there.

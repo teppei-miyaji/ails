@@ -48,7 +48,11 @@ Public draft repository with:
 - [x] Add `import` / `type` / `case` / `field` / `const`
 - [x] Generalize `match` to named sum types
 - [x] Add canonical spec draft set
-- [ ] Canonicalize payload ownership semantics for pattern bindings
+- [x] Canonicalize expression-scoped call borrow lifetime
+- [x] Canonicalize move-binding payload semantics for by-value match
+- [x] Add abstract named sum layout document
+- [x] Add HIR/MIR validation responsibility mapping
+- [ ] Decide future explicit syntax for borrow-binding pattern payloads
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology
@@ -57,3 +61,4 @@ Public draft repository with:
 - [ ] Refine branch merge rules beyond exact equality
 - [ ] Refine loop merge rules beyond exact equality
 - [ ] Add drop insertion pass
+- [ ] Add MIR validation pass implementation
