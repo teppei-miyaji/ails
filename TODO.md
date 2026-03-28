@@ -42,7 +42,11 @@ Public draft repository with:
 - [x] Formalize scrutinee consumption for payload-less by-value match
 - [x] Define left-to-right evaluation order for call-borrow legality
 - [x] Define MIR drop insertion strategy at placement-class level
-- [ ] Obtain external review for v0.19 canonical spec
+- [x] Define nested-call borrow legality
+- [x] Add placement-class to control-flow drop responsibility mapping
+- [x] Add standard remediation patterns for forbidden partial move diagnostics
+- [x] Define single-drop property as abstract validation goal
+- [ ] Obtain external review for v0.20 canonical spec
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology

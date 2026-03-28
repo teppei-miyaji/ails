@@ -83,14 +83,25 @@ For v0.1:
 - implementations may allow case discrimination without payload extraction
 - implementations must reject payload-binding forms that would require borrow-vs-move choice from a `view` scrutinee
 
-## 8. Duplicate and invalid patterns
+## 8. Forward-compatibility note for future view-matching
+
+A future revision may introduce `view`-scrutinee matching with explicit borrow-binding semantics.
+
+If that happens:
+- it must not silently reuse by-value consumption rules
+- it must define whether payload-less cases consume nothing, borrow the scrutinee, or produce a temporary discriminant-only observation
+- it must define whether payload bindings become borrowed locals or view-wrapped locals
+
+Until then, all `view`-scrutinee payload binding remains outside canonical v0.1 behavior.
+
+## 9. Duplicate and invalid patterns
 
 Within one `match`:
 - duplicate cases are invalid
 - unknown named cases are invalid
 - non-exhaustive coverage is invalid
 
-## 9. Future extension point
+## 10. Future extension point
 
 A future revision may introduce explicit syntax for:
 - borrow-binding payloads

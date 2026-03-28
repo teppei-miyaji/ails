@@ -31,7 +31,18 @@ When partial move is forbidden, diagnostics should explicitly state:
 - whether the value was consumed by by-value `match`
 - which binding became unavailable
 
-## 5. Avoid
+## 5. Standard remediation patterns for forbidden partial move
+
+Diagnostics should prefer one or more of these remediation suggestions when applicable:
+- bind the whole value instead of extracting a partial sub-structure
+- restructure the sum type into smaller explicitly moved units
+- perform the operation before the by-value `match`
+- introduce a helper function that consumes the whole matched value once
+- avoid relying on unimplemented borrow-binding semantics
+
+These are guidance patterns, not automatic rewrite guarantees.
+
+## 6. Avoid
 
 - vague panic-only behavior
 - context-free one-word messages

@@ -48,15 +48,31 @@ Consequences:
 - nested calls may create overlapping expression-scoped borrow windows
 - implementations must not reorder argument evaluation in a way that changes borrow legality
 
-## 6. Update rule
+## 6. Nested call borrow-check rule
+
+For nested call expressions, borrow legality is checked against the dynamic evaluation stack implied by left-to-right evaluation.
+
+Canonical rule:
+- an inner call finishes before its enclosing call expression finishes
+- however, any borrow created for an already-evaluated outer argument remains active until the enclosing outer call expression completes
+- therefore later nested evaluations must respect borrows established by earlier outer arguments
+
+Example shape:
+`f(g(view x), own x)`
+
+Canonical consequence:
+- if `g(view x)` creates a borrow of `x` whose effect remains active while the second outer argument is evaluated, then `own x` is illegal
+- implementations must reject programs whenever left-to-right evaluation yields such a conflict
+
+## 7. Update rule
 
 `set x = expr` is forbidden when `x` has active view borrows.
 
-## 7. Moved rule
+## 8. Moved rule
 
 Any use of a moved local is invalid.
 
-## 8. Ownership categories for pattern payloads
+## 9. Ownership categories for pattern payloads
 
 Pattern payload extraction must not be implicit.
 
@@ -66,7 +82,7 @@ Current canonical rule:
 - if the scrutinee type is wrapped in `view`, payload extraction with binding is not canonicalized and must be rejected
 - payload-less by-value `match` still consumes the scrutinee as a whole
 
-## 9. Explicitly unspecified for now
+## 10. Explicitly unspecified for now
 
 The following remain intentionally non-canonical:
 - borrow-binding of payloads from `view`-wrapped scrutinees

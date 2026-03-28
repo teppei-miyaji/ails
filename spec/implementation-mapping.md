@@ -27,6 +27,7 @@ Responsible for:
 - branch/loop join validation
 - v0.1 prohibition of `view` return types
 - call-argument left-to-right borrow legality
+- nested-call borrow legality under evaluation order rules
 
 Not responsible for:
 - CFG construction
@@ -44,12 +45,14 @@ Responsible for:
 - explicit control-flow graph structure
 - block/terminator validity
 - representation suitable for later validation and backend stages
+- carrying enough structure for drop insertion placement classes to be applied later
 
 ### Post-MIR drop insertion
 Responsible for:
 - inserting explicit drop actions
 - refining CFG when needed for drop placement
 - preserving ownership obligations on all exits
+- preparing data needed for single-drop validation
 
 Not responsible for:
 - silently inventing source-level ownership semantics absent from spec

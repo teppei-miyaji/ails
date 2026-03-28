@@ -86,3 +86,10 @@
 - Define left-to-right call evaluation for borrow legality
 - Define MIR drop insertion strategy at placement-class granularity
 - Add repository-local Gemini review prompt for v0.19 spec review
+
+## 0.1.0-draft-v0.20
+- Define nested-call borrow legality under left-to-right evaluation
+- Define placement-class to control-flow drop responsibility mapping
+- Add standard remediation patterns for forbidden partial-move diagnostics
+- Define single-drop property as an abstract MIR validation goal
+- Add repository-local Gemini review prompt for v0.20 spec review

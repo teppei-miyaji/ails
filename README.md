@@ -142,3 +142,8 @@ v0.18 tightens pattern payload ownership, forbids `view` return types for v0.1, 
 ## v0.19 review focus
 
 v0.19 formalizes payload-less scrutinee consumption, left-to-right call evaluation for borrow legality, and MIR drop placement strategy boundaries.
+
+
+## v0.20 review focus
+
+v0.20 formalizes nested-call borrow legality, placement-class drop responsibility mapping, forbidden partial-move remediation guidance, and the single-drop validation goal.
