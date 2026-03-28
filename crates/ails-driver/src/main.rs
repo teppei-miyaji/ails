@@ -50,3 +50,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+
+// NOTE(v0.23 draft):
+// A future `validate-mir` subcommand should:
+// 1. parse source
+// 2. typecheck
+// 3. lower to HIR
+// 4. lower to MIR
+// 5. run ails_mir::validate_module_structure(&mir)
+// This comment is kept until the validated command is wired in.

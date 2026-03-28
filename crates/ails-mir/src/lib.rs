@@ -1,3 +1,5 @@
+pub mod validator;
+
 use ails_ast::{BinaryOp, TypeExpr};
 use ails_hir::{HirExpr, HirFieldDecl, HirFunction, HirMatchArm, HirModule, HirPattern, HirStmt, HirTypeDecl};
 
@@ -221,3 +223,12 @@ fn lower_expr(expr: &HirExpr) -> MirExpr {
         HirExpr::Binary { op, lhs, rhs } => MirExpr::Binary { op: *op, lhs: Box::new(lower_expr(lhs)), rhs: Box::new(lower_expr(rhs)) },
     }
 }
+
+
+pub use validator::{
+    validate_function_structure,
+    validate_module_structure,
+    MirStructuralError,
+    MirStructuralErrorKind,
+    MirValidationReport,
+};

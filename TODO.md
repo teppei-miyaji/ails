@@ -14,6 +14,7 @@ Public draft repository with:
 - review-ready spec milestone
 - implementation transition pack
 - MIR structural validator starter pack
+- draft MIR structural validator code
 - `import`
 - `type`
 - `case`
@@ -33,15 +34,13 @@ Public draft repository with:
 ## Immediate priorities
 
 ### P0
-- [x] Add implementation transition pack
-- [x] Add MIR structural validator starter pack
-- [ ] Obtain external review for v0.22 MIR validator starter
-- [ ] Implement MIR structural validation pass
+- [x] Add draft MIR structural validator code
+- [ ] Obtain targeted review for v0.23 validator draft
+- [ ] Wire validator into an executable/testable path
 - [ ] Add canonical valid/invalid MIR golden samples
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology
-- [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Add drop insertion pass skeleton
 - [ ] Add MIR validation pass implementation

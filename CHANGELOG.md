@@ -106,3 +106,9 @@
 - Add golden test planning for valid/invalid MIR fixtures
 - Add validator starter API and error category guidance
 - Add repository-local Gemini review prompt for the v0.22 validator starter
+
+## 0.1.0-draft-v0.23
+- Add first draft code for MIR structural validator
+- Export validator result types from `ails-mir`
+- Add fixture bootstrapping notes for MIR validation
+- Add repository-local Gemini review prompt for the v0.23 validator draft

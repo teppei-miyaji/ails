@@ -17,19 +17,19 @@
 - Front-end baseline: 100%
 - Canonical spec set: 94%
 - Ownership-aware type system: 74%
-- HIR/MIR pipeline: 68%
-- Implementation transition readiness: 90%
+- HIR/MIR pipeline: 74%
+- Implementation transition readiness: 93%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 95%**
+**Overall: 96%**
 
 ## Current work item
 
 Current work item definition:
-- prepare the first executable MIR validator slice
-- define fixture strategy and validator error categories
-- make implementation entry unambiguous
+- turn the validator starter into a first code slice
+- define structural error surface in code
+- prepare fixtures and next-stage wiring
 
 **Current work item: 100%**

@@ -157,3 +157,8 @@ v0.21 adds an implementation-transition pack for alignment, MIR validation desig
 ## v0.22 MIR structural validator starter
 
 v0.22 adds a starter pack for MIR structural validation, golden tests, and validator error categories.
+
+
+## v0.23 structural validator draft
+
+v0.23 adds the first code starter for MIR structural validation, together with fixture bootstrapping and implementation notes.

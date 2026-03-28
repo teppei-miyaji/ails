@@ -74,3 +74,7 @@ Abstract goal:
 - per-function validation report
 - stable error categories
 - golden valid/invalid MIR samples
+
+## v0.23 note
+
+A code starter for the structural validator now exists in `crates/ails-mir/src/validator.rs` as an unverified draft implementation.
