@@ -93,3 +93,13 @@ If you do not use `gh`, you may use HTTPS with a Personal Access Token instead o
 ## Repository intent
 
 This repository is structured so it can be pushed to GitHub directly and iterated in public.
+
+
+## Project tracking
+
+- `TODO.md`
+- `docs/roadmap.md`
+- `docs/progress.md`
+- `docs/issues/`
+
+These files are intended to make incremental public GitHub work easier to manage.
