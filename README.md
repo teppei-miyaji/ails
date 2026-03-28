@@ -152,3 +152,8 @@ v0.20 formalizes nested-call borrow legality, placement-class drop responsibilit
 ## v0.21 implementation transition
 
 v0.21 adds an implementation-transition pack for alignment, MIR validation design, single-drop planning, diagnostics remediation, and backend handoff staging.
+
+
+## v0.22 MIR structural validator starter
+
+v0.22 adds a starter pack for MIR structural validation, golden tests, and validator error categories.

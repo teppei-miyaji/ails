@@ -13,6 +13,7 @@ Public draft repository with:
 - canonical spec draft set
 - review-ready spec milestone
 - implementation transition pack
+- MIR structural validator starter pack
 - `import`
 - `type`
 - `case`
@@ -32,28 +33,16 @@ Public draft repository with:
 ## Immediate priorities
 
 ### P0
-- [x] Add canonical spec draft set
-- [x] Canonicalize expression-scoped call borrow lifetime
-- [x] Canonicalize move-binding payload semantics for by-value match
-- [x] Forbid partial move in v0.1
-- [x] Forbid `view` return types in v0.1
-- [x] Add abstract named sum layout document
-- [x] Add HIR/MIR validation responsibility mapping
-- [x] Clarify MIR drop responsibility boundary
-- [x] Formalize scrutinee consumption for payload-less by-value match
-- [x] Define left-to-right evaluation order for call-borrow legality
-- [x] Define MIR drop insertion strategy at placement-class level
-- [x] Define nested-call borrow legality
-- [x] Add placement-class to control-flow drop responsibility mapping
-- [x] Add standard remediation patterns for forbidden partial move diagnostics
-- [x] Define single-drop property as abstract validation goal
 - [x] Add implementation transition pack
-- [ ] Obtain external review for v0.21 implementation transition pack
+- [x] Add MIR structural validator starter pack
+- [ ] Obtain external review for v0.22 MIR validator starter
+- [ ] Implement MIR structural validation pass
+- [ ] Add canonical valid/invalid MIR golden samples
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology
-- [ ] Implement MIR structural validation pass
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Add drop insertion pass skeleton
 - [ ] Add MIR validation pass implementation
+- [ ] Add single-drop property checker skeleton

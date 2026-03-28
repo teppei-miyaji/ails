@@ -29,8 +29,18 @@ Bring the Rust draft implementation into alignment with canonical spec v0.20.
   - nested-call borrow conflicts
   - exact-equality join violations
 
+## Phase E: Golden test alignment
+Prepare canonical valid/invalid samples for:
+- valid minimal single-block MIR
+- invalid missing-terminator MIR
+- invalid dangling-block-reference MIR
+- invalid unreachable-block MIR
+- invalid duplicate-block-id MIR
+- valid branch MIR with consistent edges
+
 ## Exit criteria
 - implementation terminology is aligned
 - typechecker behavior matches canonical v0.20
 - MIR shape supports validator design
 - diagnostics expose rule names and affected bindings
+- canonical MIR samples exist for golden testing

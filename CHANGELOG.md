@@ -100,3 +100,9 @@
 - Add single-drop property implementation plan
 - Add diagnostics remediation catalog
 - Add backend handoff draft and v0.21 implementation review prompt
+
+## 0.1.0-draft-v0.22
+- Add MIR structural validator starter pack
+- Add golden test planning for valid/invalid MIR fixtures
+- Add validator starter API and error category guidance
+- Add repository-local Gemini review prompt for the v0.22 validator starter
