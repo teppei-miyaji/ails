@@ -63,3 +63,8 @@
 - Extend AST/HIR/MIR module-level metadata for imports, types, and consts
 - Add type registry and const registry to type checker
 - Generalize `match` exhaustiveness checking to user-defined sum types
+
+## 0.1.0-draft-v0.16
+- Add canonical spec set under `spec/`
+- Split language, grammar, type system, ownership, join rules, pattern matching, HIR, MIR, diagnostics, and AI authoring guidance
+- Mark spec as source of truth over implementation when they diverge

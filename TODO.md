@@ -10,6 +10,7 @@ Public draft repository with:
 - initial MIR lowering
 - minimal type checker
 - CLI driver
+- canonical spec draft set
 - `import`
 - `type`
 - `case`
@@ -46,16 +47,13 @@ Public draft repository with:
 - [x] Lower `if` / `while` / `match` into MIR CFG form
 - [x] Add `import` / `type` / `case` / `field` / `const`
 - [x] Generalize `match` to named sum types
-- [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
+- [x] Add canonical spec draft set
+- [ ] Canonicalize payload ownership semantics for pattern bindings
 
 ### P1
+- [ ] Align Rust implementation names and structure with canonical spec terminology
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Refine branch merge rules beyond exact equality
 - [ ] Refine loop merge rules beyond exact equality
 - [ ] Add drop insertion pass
-
-### P2
-- [ ] Add MIR dump stability checks / snapshots
-- [ ] Start backend interface design
-- [ ] Add x86_64 backend scaffold

@@ -1,0 +1,93 @@
+# AILS Grammar (EBNF)
+
+module          = "module", qualified_name, newline,
+                  { import_decl },
+                  { type_decl },
+                  { const_decl },
+                  { func_decl },
+                  eof ;
+
+import_decl     = "import", qualified_name, newline ;
+
+type_decl       = "type", ident, "is", newline,
+                  { case_decl },
+                  "end", [ newline ] ;
+
+case_decl       = "case", ident, newline,
+                  { field_decl } ;
+
+field_decl      = "field", ident, ":", type_expr, newline ;
+
+const_decl      = "const", ident, ":", type_expr, "=", expr, newline ;
+
+func_decl       = "func", ident, newline,
+                  { input_decl },
+                  output_decl,
+                  effect_decl,
+                  "begin", newline,
+                  stmt_block,
+                  "end", [ newline ] ;
+
+input_decl      = "input", ident, ":", type_expr, newline ;
+output_decl     = "output", type_expr, newline ;
+effect_decl     = "effect", effect_name, { effect_name }, newline ;
+
+stmt_block      = { stmt } ;
+
+stmt            = let_stmt
+                | set_stmt
+                | return_stmt
+                | if_stmt
+                | while_stmt
+                | match_stmt ;
+
+let_stmt        = "let", ident, ":", type_expr, "=", expr, newline ;
+set_stmt        = "set", ident, "=", expr, newline ;
+return_stmt     = "return", expr, newline ;
+
+if_stmt         = "if", expr, "then", newline,
+                  "begin", newline, stmt_block,
+                  "end", newline,
+                  "else", newline,
+                  "begin", newline, stmt_block,
+                  "end", [ newline ] ;
+
+while_stmt      = "while", expr, newline,
+                  "begin", newline, stmt_block,
+                  "end", [ newline ] ;
+
+match_stmt      = "match", expr, newline,
+                  { match_arm },
+                  "end", [ newline ] ;
+
+match_arm       = "case", pattern, newline,
+                  "begin", newline, stmt_block,
+                  "end", [ newline ] ;
+
+pattern         = "some", ident
+                | "none"
+                | "ok", ident
+                | "err", ident
+                | ident, [ ident ] ;
+
+expr            = equality ;
+equality        = relational, { ("==" | "!="), relational } ;
+relational      = additive, { ("<" | "<=" | ">" | ">="), additive } ;
+additive        = multiplicative, { ("+" | "-"), multiplicative } ;
+multiplicative  = primary, { ("*" | "/"), primary } ;
+
+primary         = ident, [ "(", [ expr, { ",", expr } ], ")" ]
+                | int
+                | "true"
+                | "false" ;
+
+type_expr       = primitive_type
+                | ident
+                | "own", type_expr
+                | "view", type_expr
+                | "option", type_expr
+                | "result", type_expr, type_expr ;
+
+primitive_type  = "bool" | "i32" | "i64" | "u32" | "u64" | "usize" | "unit" ;
+effect_name     = "pure" | "io" | "alloc" | "unsafe" | "syscall" ;
+qualified_name  = ident, { ".", ident } ;

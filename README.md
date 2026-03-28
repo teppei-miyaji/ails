@@ -121,3 +121,9 @@ This repository is structured so it can be pushed to GitHub directly and iterate
 - `docs/issues/`
 
 These files are intended to make incremental public GitHub work easier to manage.
+
+
+## Canonical spec set
+
+The repository now includes a canonical spec draft under `spec/`.
+This spec set should be treated as the source of truth when implementation and docs diverge.
