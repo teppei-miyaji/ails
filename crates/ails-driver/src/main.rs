@@ -60,3 +60,18 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 // 4. lower to MIR
 // 5. run ails_mir::validate_module_structure(&mir)
 // This comment is kept until the validated command is wired in.
+
+
+// NOTE(v0.24 draft):
+// Planned subcommand:
+//   validate-mir-structure <input>
+//
+// Intended flow:
+// 1. parse source into AST
+// 2. typecheck AST
+// 3. lower AST -> HIR
+// 4. lower HIR -> MIR
+// 5. run ails_mir::validate_module_structure(&mir)
+// 6. print per-function MirValidationReport
+//
+// Kept as documentation until command wiring is implemented and verified.

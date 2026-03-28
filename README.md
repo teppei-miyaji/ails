@@ -162,3 +162,8 @@ v0.22 adds a starter pack for MIR structural validation, golden tests, and valid
 ## v0.23 structural validator draft
 
 v0.23 adds the first code starter for MIR structural validation, together with fixture bootstrapping and implementation notes.
+
+
+## v0.24 validator wiring
+
+v0.24 adds a wiring plan for the first executable MIR structural validation path and separates valid source fixtures from invalid Rust-constructed MIR tests.

@@ -1,0 +1,8 @@
+module test.minimal_function
+
+func main
+    output unit
+    effect pure
+begin
+    return true == true
+end
