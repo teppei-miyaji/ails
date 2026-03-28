@@ -46,3 +46,8 @@
 - Add first ownership-state merge check across `while` loop boundaries
 - Reject mismatched moved state across loop entry/body boundary
 - Reject mismatched borrow count across loop entry/body boundary
+
+## 0.1.0-draft-v0.13
+- Replace placeholder HIR with real lowered HIR structures
+- Lower functions, statements, expressions, and match arms into HIR
+- Keep `hir` driver command aligned with real lowered output

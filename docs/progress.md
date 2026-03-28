@@ -13,19 +13,20 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 81%
+- Front-end baseline: 82%
 - Ownership-aware type system: 50%
-- HIR/MIR pipeline: 12%
+- HIR/MIR pipeline: 24%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 56%**
+**Overall: 60%**
 
 ## Current work item
 
 Current work item definition:
-- add while-loop ownership state checking
-- reject mismatched moved state across loop boundary
+- replace placeholder HIR
+- lower checked AST shape into concrete HIR structures
+- keep driver HIR dump useful
 
 **Current work item: 100%**

@@ -21,3 +21,5 @@ Implement the first ownership-aware type checking pass.
 
 
 Status: partially implemented in v0.8 draft artifact.
+
+Progress note: control-flow ownership checks now cover initial `if` and `while` boundaries.

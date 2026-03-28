@@ -19,7 +19,7 @@ It is intended to be published as a public GitHub repository and evolved increme
 - lexer
 - parser
 - AST
-- minimal HIR skeleton
+- real HIR lowering from AST
 - `match` / `result` / `option` front-end slice
 - minimal type checker
 - ownership surface syntax for `own` / `view`

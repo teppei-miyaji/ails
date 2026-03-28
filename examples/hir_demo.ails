@@ -1,0 +1,17 @@
+module demo.hir_demo
+
+func demo
+    input x: i32
+    output i32
+    effect pure
+begin
+    let y: i32 = x + 1
+    if y > 0 then
+    begin
+        return y
+    end
+    else
+    begin
+        return 0
+    end
+end

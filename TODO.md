@@ -6,7 +6,7 @@ Public draft repository with:
 - lexer
 - parser
 - AST
-- minimal HIR skeleton
+- initial HIR lowering
 - minimal type checker
 - CLI driver
 - `let`
@@ -35,6 +35,7 @@ Public draft repository with:
 - [x] Add first borrow/update conflict rejection
 - [x] Add first branch ownership-state checking
 - [x] Add first loop ownership-state checking
+- [x] Replace placeholder HIR with real lowered structures
 - [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
@@ -45,7 +46,6 @@ Public draft repository with:
 - [ ] Refine loop merge rules beyond exact equality
 
 ### P2
-- [ ] Lower AST into non-placeholder HIR
 - [ ] Add MIR data structures
 - [ ] Lower `if` / `while` / `match` into MIR CFG
 - [ ] Add drop insertion pass
