@@ -3,3 +3,7 @@ name = "ails-mir"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+
+[dependencies]
+ails-ast = { path = "../ails-ast" }
+ails-hir = { path = "../ails-hir" }

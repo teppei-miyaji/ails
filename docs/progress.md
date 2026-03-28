@@ -15,18 +15,18 @@
 - Public repository / packaging / licensing: 100%
 - Front-end baseline: 82%
 - Ownership-aware type system: 50%
-- HIR/MIR pipeline: 24%
+- HIR/MIR pipeline: 42%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 60%**
+**Overall: 67%**
 
 ## Current work item
 
 Current work item definition:
-- replace placeholder HIR
-- lower checked AST shape into concrete HIR structures
-- keep driver HIR dump useful
+- add MIR data structures
+- lower HIR into CFG-shaped MIR
+- expose MIR dump from driver
 
 **Current work item: 100%**

@@ -12,7 +12,7 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut args = env::args().skip(1);
-    let sub = args.next().ok_or("missing subcommand: use `tokens`, `parse`, `check`, or `hir`")?;
+    let sub = args.next().ok_or("missing subcommand: use `tokens`, `parse`, `check`, `hir`, or `mir`")?;
     let path = args.next().ok_or("missing input path")?;
     let input = fs::read_to_string(path)?;
 
@@ -37,6 +37,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             ails_typecheck::check_module(&module)?;
             let hir = ails_hir::lower_module(&module);
             println!("{:#?}", hir);
+        }
+        "mir" => {
+            let module = ails_parser::parse_module(&input)?;
+            ails_typecheck::check_module(&module)?;
+            let hir = ails_hir::lower_module(&module);
+            let mir = ails_mir::lower_module(&hir);
+            println!("{:#?}", mir);
         }
         _ => return Err(format!("unknown subcommand `{sub}`").into()),
     }

@@ -84,6 +84,7 @@ cargo run -p ails-driver -- tokens examples/add.ails
 cargo run -p ails-driver -- parse examples/if_demo.ails
 cargo run -p ails-driver -- check examples/if_demo.ails
 cargo run -p ails-driver -- hir examples/if_demo.ails
+cargo run -p ails-driver -- mir examples/hir_demo.ails
 ```
 
 ## Publish to GitHub from Windows Command Prompt

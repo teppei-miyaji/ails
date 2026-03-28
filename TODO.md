@@ -7,6 +7,7 @@ Public draft repository with:
 - parser
 - AST
 - initial HIR lowering
+- initial MIR lowering
 - minimal type checker
 - CLI driver
 - `let`
@@ -36,6 +37,8 @@ Public draft repository with:
 - [x] Add first branch ownership-state checking
 - [x] Add first loop ownership-state checking
 - [x] Replace placeholder HIR with real lowered structures
+- [x] Add initial MIR data structures
+- [x] Lower `if` / `while` / `match` into MIR CFG form
 - [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
@@ -44,9 +47,9 @@ Public draft repository with:
 - [ ] Generalize `match` to named sum types
 - [ ] Refine branch merge rules beyond exact equality
 - [ ] Refine loop merge rules beyond exact equality
+- [ ] Add drop insertion pass
 
 ### P2
-- [ ] Add MIR data structures
-- [ ] Lower `if` / `while` / `match` into MIR CFG
-- [ ] Add drop insertion pass
-- [ ] Add MIR dump command to driver
+- [ ] Add MIR dump stability checks / snapshots
+- [ ] Start backend interface design
+- [ ] Add x86_64 backend scaffold

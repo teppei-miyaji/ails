@@ -51,3 +51,9 @@
 - Replace placeholder HIR with real lowered HIR structures
 - Lower functions, statements, expressions, and match arms into HIR
 - Keep `hir` driver command aligned with real lowered output
+
+## 0.1.0-draft-v0.14
+- Add concrete MIR data structures
+- Lower HIR functions into block-based MIR
+- Lower `if`, `while`, and `match` into CFG-style terminators
+- Add `mir` driver subcommand

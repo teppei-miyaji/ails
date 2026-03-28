@@ -1,0 +1,21 @@
+module demo.mir_demo
+
+func flow
+    input x: i32
+    output i32
+    effect pure
+begin
+    let y: i32 = x + 1
+    while false
+    begin
+        set y = y + 1
+    end
+    if y > 0 then
+    begin
+        return y
+    end
+    else
+    begin
+        return 0
+    end
+end

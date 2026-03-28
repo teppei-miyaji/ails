@@ -9,3 +9,4 @@ ails-lexer = { path = "../ails-lexer" }
 ails-parser = { path = "../ails-parser" }
 ails-typecheck = { path = "../ails-typecheck" }
 ails-hir = { path = "../ails-hir" }
+ails-mir = { path = "../ails-mir" }
