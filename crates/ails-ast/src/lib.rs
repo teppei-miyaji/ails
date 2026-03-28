@@ -23,6 +23,10 @@ pub struct Param {
 pub enum TypeExpr {
     Primitive(PrimitiveType),
     Named(String),
+    Own(Box<TypeExpr>),
+    View(Box<TypeExpr>),
+    Option(Box<TypeExpr>),
+    Result(Box<TypeExpr>, Box<TypeExpr>),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -57,6 +61,25 @@ pub enum Stmt {
         cond: Expr,
         body: Vec<Stmt>,
     },
+    Match {
+        scrutinee: Expr,
+        arms: Vec<MatchArm>,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MatchArm {
+    pub pattern: Pattern,
+    pub body: Vec<Stmt>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Pattern {
+    Some(String),
+    None,
+    Ok(String),
+    Err(String),
+    Case { name: String, binding: Option<String> },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -105,5 +128,31 @@ impl TypeExpr {
 
     pub fn is_unit(&self) -> bool {
         matches!(self, TypeExpr::Primitive(PrimitiveType::Unit))
+    }
+
+    pub fn strip_wrappers(&self) -> &TypeExpr {
+        match self {
+            TypeExpr::Own(inner) | TypeExpr::View(inner) => inner.strip_wrappers(),
+            other => other,
+        }
+    }
+
+    pub fn is_view(&self) -> bool {
+        matches!(self, TypeExpr::View(_))
+    }
+
+    pub fn is_own(&self) -> bool {
+        matches!(self, TypeExpr::Own(_))
+    }
+
+    pub fn is_move_only(&self) -> bool {
+        self.is_own()
+    }
+
+    pub fn can_view_as(&self, target: &TypeExpr) -> bool {
+        match target {
+            TypeExpr::View(inner) => self.strip_wrappers() == inner.strip_wrappers(),
+            _ => self == target,
+        }
     }
 }

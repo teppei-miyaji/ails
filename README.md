@@ -20,7 +20,9 @@ It is intended to be published as a public GitHub repository and evolved increme
 - parser
 - AST
 - minimal HIR skeleton
+- `match` / `result` / `option` front-end slice
 - minimal type checker
+- ownership surface syntax for `own` / `view`
 - CLI driver
 
 Parser support currently includes:
@@ -34,6 +36,11 @@ Parser support currently includes:
 - `return`
 - `if ... then ... else`
 - `while`
+- `match`
+- `result` types
+- `option` types
+- `own` types
+- `view` types
 - integer literals
 - boolean literals
 - arithmetic operators
@@ -52,7 +59,6 @@ Type checker support currently includes:
 ## Not implemented yet
 
 - ownership checking for `own` / `view`
-- `match`
 - MIR
 - code generation
 - x86_64 backend

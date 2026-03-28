@@ -1,0 +1,18 @@
+module demo.option_match
+
+func unwrap_or_one
+    input x: option i32
+    output i32
+    effect pure
+begin
+    match x
+    case some value
+    begin
+        return value
+    end
+    case none
+    begin
+        return 1
+    end
+    end
+end

@@ -14,6 +14,8 @@ pub enum TokenKind {
     Then,
     Else,
     While,
+    Match,
+    Case,
     Pure,
     Io,
     Alloc,
@@ -21,6 +23,14 @@ pub enum TokenKind {
     Syscall,
     True,
     False,
+    OwnKw,
+    ViewKw,
+    OptionKw,
+    ResultKw,
+    SomeKw,
+    NoneKw,
+    OkKw,
+    ErrKw,
     Ident(String),
     Int(String),
     Colon,
@@ -69,28 +79,28 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
             '*' => { out.push(Token { kind: TokenKind::Star, offset: i }); i += 1; }
             '/' => { out.push(Token { kind: TokenKind::Slash, offset: i }); i += 1; }
             '<' => {
-                if i + 1 < bytes.len() && bytes[i+1] == b'=' {
+                if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                     out.push(Token { kind: TokenKind::Le, offset: i }); i += 2;
                 } else {
                     out.push(Token { kind: TokenKind::Lt, offset: i }); i += 1;
                 }
             }
             '>' => {
-                if i + 1 < bytes.len() && bytes[i+1] == b'=' {
+                if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                     out.push(Token { kind: TokenKind::Ge, offset: i }); i += 2;
                 } else {
                     out.push(Token { kind: TokenKind::Gt, offset: i }); i += 1;
                 }
             }
             '=' => {
-                if i + 1 < bytes.len() && bytes[i+1] == b'=' {
+                if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                     out.push(Token { kind: TokenKind::EqEq, offset: i }); i += 2;
                 } else {
                     return Err(LexError::UnexpectedChar { ch, offset: i });
                 }
             }
             '!' => {
-                if i + 1 < bytes.len() && bytes[i+1] == b'=' {
+                if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                     out.push(Token { kind: TokenKind::Ne, offset: i }); i += 2;
                 } else {
                     return Err(LexError::UnexpectedChar { ch, offset: i });
@@ -121,6 +131,8 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                     "then" => TokenKind::Then,
                     "else" => TokenKind::Else,
                     "while" => TokenKind::While,
+                    "match" => TokenKind::Match,
+                    "case" => TokenKind::Case,
                     "pure" => TokenKind::Pure,
                     "io" => TokenKind::Io,
                     "alloc" => TokenKind::Alloc,
@@ -128,6 +140,14 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                     "syscall" => TokenKind::Syscall,
                     "true" => TokenKind::True,
                     "false" => TokenKind::False,
+                    "own" => TokenKind::OwnKw,
+                    "view" => TokenKind::ViewKw,
+                    "option" => TokenKind::OptionKw,
+                    "result" => TokenKind::ResultKw,
+                    "some" => TokenKind::SomeKw,
+                    "none" => TokenKind::NoneKw,
+                    "ok" => TokenKind::OkKw,
+                    "err" => TokenKind::ErrKw,
                     _ => TokenKind::Ident(text.to_string()),
                 };
                 out.push(Token { kind, offset: start });

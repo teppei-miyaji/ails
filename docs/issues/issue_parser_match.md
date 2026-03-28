@@ -19,3 +19,6 @@ Implement `match` parsing in the public AILS compiler skeleton.
 - type checking
 - exhaustiveness
 - ownership interaction
+
+
+Status: implemented in v0.7 draft artifact.

@@ -18,3 +18,6 @@ Implement the first ownership-aware type checking pass.
 ## Out of scope
 - non-lexical borrows
 - mutable references
+
+
+Status: partially implemented in v0.8 draft artifact.

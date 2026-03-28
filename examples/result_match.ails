@@ -1,0 +1,18 @@
+module demo.result_match
+
+func unwrap_or_zero
+    input r: result i32 i32
+    output i32
+    effect pure
+begin
+    match r
+    case ok value
+    begin
+        return value
+    end
+    case err e
+    begin
+        return 0
+    end
+    end
+end

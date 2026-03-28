@@ -17,3 +17,6 @@ Extend the type checker so `match` can be type-checked and validated for exhaust
 
 ## Out of scope
 - ownership-aware pattern matching
+
+
+Status: partially implemented in v0.7 draft artifact.

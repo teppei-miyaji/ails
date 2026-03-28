@@ -1,0 +1,14 @@
+module demo.non_exhaustive_result_match
+
+func bad
+    input r: result i32 i32
+    output i32
+    effect pure
+begin
+    match r
+    case ok value
+    begin
+        return value
+    end
+    end
+end

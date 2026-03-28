@@ -13,21 +13,20 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 40%
-- Ownership-aware type system: 5%
-- HIR/MIR pipeline: 10%
+- Front-end baseline: 66%
+- Ownership-aware type system: 18%
+- HIR/MIR pipeline: 12%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 28%**
+**Overall: 39%**
 
 ## Current work item
 
 Current work item definition:
-- add TODO
-- add roadmap
-- add issue drafts
-- prepare next implementation slice
+- add `own` / `view` type syntax
+- add first move-after-use detection
+- prepare next ownership slice
 
 **Current work item: 100%**

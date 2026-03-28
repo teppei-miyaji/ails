@@ -1,0 +1,9 @@
+module demo.view_param
+
+func inspect_id
+    input x: view i32
+    output bool
+    effect pure
+begin
+    return x == x
+end

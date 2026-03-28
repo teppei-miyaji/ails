@@ -1,0 +1,16 @@
+module demo.move_after_use
+
+func bad
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    if true then
+    begin
+        return x
+    end
+    else
+    begin
+        return x
+    end
+end

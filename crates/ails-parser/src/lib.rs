@@ -1,4 +1,4 @@
-use ails_ast::{BinaryOp, Effect, Expr, Function, Module, Param, PrimitiveType, Stmt, TypeExpr};
+use ails_ast::{BinaryOp, Effect, Expr, Function, MatchArm, Module, Param, Pattern, PrimitiveType, Stmt, TypeExpr};
 use ails_lexer::{lex, Token, TokenKind};
 use thiserror::Error;
 
@@ -58,7 +58,11 @@ impl Parser {
                 TokenKind::Output => output = Some(self.parse_output()?),
                 TokenKind::Effect => effects = Some(self.parse_effects()?),
                 TokenKind::Begin => break,
-                other => return Err(ParseError::Expected { expected: "`input`, `output`, `effect`, or `begin`", found: other.clone(), index: self.index }),
+                other => return Err(ParseError::Expected {
+                    expected: "`input`, `output`, `effect`, or `begin`",
+                    found: other.clone(),
+                    index: self.index,
+                }),
             }
         }
 
@@ -73,8 +77,16 @@ impl Parser {
         Ok(Function {
             name,
             inputs,
-            output: output.ok_or_else(|| ParseError::Expected { expected: "function output declaration", found: self.peek().clone(), index: self.index })?,
-            effects: effects.ok_or_else(|| ParseError::Expected { expected: "function effect declaration", found: self.peek().clone(), index: self.index })?,
+            output: output.ok_or_else(|| ParseError::Expected {
+                expected: "function output declaration",
+                found: self.peek().clone(),
+                index: self.index,
+            })?,
+            effects: effects.ok_or_else(|| ParseError::Expected {
+                expected: "function effect declaration",
+                found: self.peek().clone(),
+                index: self.index,
+            })?,
             body,
         })
     }
@@ -89,7 +101,12 @@ impl Parser {
                 TokenKind::Return => self.parse_return()?,
                 TokenKind::If => self.parse_if()?,
                 TokenKind::While => self.parse_while()?,
-                other => return Err(ParseError::Expected { expected: "`return`, `if`, `while`, or block terminator", found: other.clone(), index: self.index }),
+                TokenKind::Match => self.parse_match()?,
+                other => return Err(ParseError::Expected {
+                    expected: "`return`, `if`, `while`, `match`, or block terminator",
+                    found: other.clone(),
+                    index: self.index,
+                }),
             };
             body.push(stmt);
         }
@@ -121,7 +138,11 @@ impl Parser {
                     effects.push(self.parse_effect()?);
                 }
                 TokenKind::Newline => break,
-                other => return Err(ParseError::Expected { expected: "effect name or newline", found: other.clone(), index: self.index }),
+                other => return Err(ParseError::Expected {
+                    expected: "effect name or newline",
+                    found: other.clone(),
+                    index: self.index,
+                }),
             }
         }
         self.expect_newline()?;
@@ -135,7 +156,11 @@ impl Parser {
             TokenKind::Alloc => Effect::Alloc,
             TokenKind::Unsafe => Effect::Unsafe,
             TokenKind::Syscall => Effect::Syscall,
-            found => return Err(ParseError::Expected { expected: "effect name", found, index: self.index.saturating_sub(1) }),
+            found => return Err(ParseError::Expected {
+                expected: "effect name",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
         };
         Ok(effect)
     }
@@ -177,6 +202,70 @@ impl Parser {
         self.expect_keyword(TokenKind::End, "`end`")?;
         self.expect_optional_newline();
         Ok(Stmt::While { cond, body })
+    }
+
+    fn parse_match(&mut self) -> Result<Stmt, ParseError> {
+        self.expect_keyword(TokenKind::Match, "`match`")?;
+        let scrutinee = self.parse_expr()?;
+        self.expect_newline()?;
+        let mut arms = Vec::new();
+        loop {
+            self.skip_newlines();
+            match self.peek() {
+                TokenKind::Case => arms.push(self.parse_match_arm()?),
+                TokenKind::End => break,
+                other => return Err(ParseError::Expected {
+                    expected: "`case` or `end`",
+                    found: other.clone(),
+                    index: self.index,
+                }),
+            }
+        }
+        self.expect_keyword(TokenKind::End, "`end`")?;
+        self.expect_optional_newline();
+        Ok(Stmt::Match { scrutinee, arms })
+    }
+
+    fn parse_match_arm(&mut self) -> Result<MatchArm, ParseError> {
+        self.expect_keyword(TokenKind::Case, "`case`")?;
+        let pattern = self.parse_pattern()?;
+        self.expect_newline()?;
+        self.expect_keyword(TokenKind::Begin, "`begin`")?;
+        self.expect_newline()?;
+        let body = self.parse_stmt_block(&[TokenKind::End])?;
+        self.expect_keyword(TokenKind::End, "`end`")?;
+        self.expect_optional_newline();
+        Ok(MatchArm { pattern, body })
+    }
+
+    fn parse_pattern(&mut self) -> Result<Pattern, ParseError> {
+        match self.next().kind {
+            TokenKind::SomeKw => {
+                let binding = self.parse_ident()?;
+                Ok(Pattern::Some(binding))
+            }
+            TokenKind::NoneKw => Ok(Pattern::None),
+            TokenKind::OkKw => {
+                let binding = self.parse_ident()?;
+                Ok(Pattern::Ok(binding))
+            }
+            TokenKind::ErrKw => {
+                let binding = self.parse_ident()?;
+                Ok(Pattern::Err(binding))
+            }
+            TokenKind::Ident(name) => {
+                let binding = match self.peek() {
+                    TokenKind::Ident(_) => Some(self.parse_ident()?),
+                    _ => None,
+                };
+                Ok(Pattern::Case { name, binding })
+            }
+            found => Err(ParseError::Expected {
+                expected: "pattern",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
+        }
     }
 
     fn parse_expr(&mut self) -> Result<Expr, ParseError> { self.parse_equality() }
@@ -249,12 +338,33 @@ impl Parser {
             TokenKind::Int(text) => text.parse::<i64>().map(Expr::Int).map_err(|_| ParseError::InvalidInt(text)),
             TokenKind::True => Ok(Expr::Bool(true)),
             TokenKind::False => Ok(Expr::Bool(false)),
-            found => Err(ParseError::Expected { expected: "identifier, integer literal, or boolean literal", found, index: self.index.saturating_sub(1) }),
+            found => Err(ParseError::Expected {
+                expected: "identifier, integer literal, or boolean literal",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
         }
     }
 
     fn parse_type(&mut self) -> Result<TypeExpr, ParseError> {
         match self.next().kind {
+            TokenKind::OwnKw => {
+                let inner = self.parse_type()?;
+                Ok(TypeExpr::Own(Box::new(inner)))
+            }
+            TokenKind::ViewKw => {
+                let inner = self.parse_type()?;
+                Ok(TypeExpr::View(Box::new(inner)))
+            }
+            TokenKind::OptionKw => {
+                let inner = self.parse_type()?;
+                Ok(TypeExpr::Option(Box::new(inner)))
+            }
+            TokenKind::ResultKw => {
+                let ok = self.parse_type()?;
+                let err = self.parse_type()?;
+                Ok(TypeExpr::Result(Box::new(ok), Box::new(err)))
+            }
             TokenKind::Ident(name) => Ok(match name.as_str() {
                 "bool" => TypeExpr::Primitive(PrimitiveType::Bool),
                 "i32" => TypeExpr::Primitive(PrimitiveType::I32),
@@ -265,7 +375,11 @@ impl Parser {
                 "unit" => TypeExpr::Primitive(PrimitiveType::Unit),
                 _ => TypeExpr::Named(name),
             }),
-            found => Err(ParseError::Expected { expected: "type name", found, index: self.index.saturating_sub(1) }),
+            found => Err(ParseError::Expected {
+                expected: "type name",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
         }
     }
 
@@ -282,14 +396,22 @@ impl Parser {
     fn parse_ident(&mut self) -> Result<String, ParseError> {
         match self.next().kind {
             TokenKind::Ident(name) => Ok(name),
-            found => Err(ParseError::Expected { expected: "identifier", found, index: self.index.saturating_sub(1) }),
+            found => Err(ParseError::Expected {
+                expected: "identifier",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
         }
     }
 
     fn expect_newline(&mut self) -> Result<(), ParseError> {
         match self.next().kind {
             TokenKind::Newline => Ok(()),
-            found => Err(ParseError::Expected { expected: "newline", found, index: self.index.saturating_sub(1) }),
+            found => Err(ParseError::Expected {
+                expected: "newline",
+                found,
+                index: self.index.saturating_sub(1),
+            }),
         }
     }
 
@@ -304,12 +426,18 @@ impl Parser {
         if std::mem::discriminant(&token.kind) == std::mem::discriminant(&expected_kind) {
             Ok(())
         } else {
-            Err(ParseError::Expected { expected, found: token.kind, index: self.index.saturating_sub(1) })
+            Err(ParseError::Expected {
+                expected,
+                found: token.kind,
+                index: self.index.saturating_sub(1),
+            })
         }
     }
 
     fn skip_newlines(&mut self) {
-        while matches!(self.peek(), TokenKind::Newline) { self.next(); }
+        while matches!(self.peek(), TokenKind::Newline) {
+            self.next();
+        }
     }
 
     fn at_eof(&self) -> bool {

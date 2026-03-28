@@ -16,3 +16,6 @@ Extend the AST and related type representation to cover `result`, `option`, and 
 ## Out of scope
 - exhaustiveness
 - borrow semantics
+
+
+Status: implemented in v0.7 draft artifact.

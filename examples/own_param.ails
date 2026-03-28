@@ -1,0 +1,9 @@
+module demo.own_param
+
+func consume_id
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    return x
+end

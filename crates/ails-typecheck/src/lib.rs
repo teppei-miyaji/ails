@@ -1,7 +1,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use ails_ast::{BinaryOp, Expr, Function, Module, PrimitiveType, Stmt, TypeExpr};
+use ails_ast::{BinaryOp, Expr, Function, MatchArm, Module, Pattern, PrimitiveType, Stmt, TypeExpr};
 use thiserror::Error;
+
+#[derive(Debug, Clone)]
+struct LocalState {
+    ty: TypeExpr,
+    moved: bool,
+    borrowed_view_count: u32,
+}
 
 #[derive(Debug, Error)]
 pub enum TypeCheckError {
@@ -15,28 +22,34 @@ pub enum TypeCheckError {
     UnknownIdentifier { function: String, name: String },
 
     #[error("type mismatch in function `{function}`: expected {expected:?}, found {found:?}")]
-    TypeMismatch {
-        function: String,
-        expected: TypeExpr,
-        found: TypeExpr,
-    },
+    TypeMismatch { function: String, expected: TypeExpr, found: TypeExpr },
 
     #[error("binary operator `{op:?}` requires compatible operands in function `{function}`, found lhs={lhs:?}, rhs={rhs:?}")]
-    InvalidBinaryOperands {
-        function: String,
-        op: BinaryOp,
-        lhs: TypeExpr,
-        rhs: TypeExpr,
-    },
+    InvalidBinaryOperands { function: String, op: BinaryOp, lhs: TypeExpr, rhs: TypeExpr },
 
     #[error("condition in function `{function}` must be bool, found {found:?}")]
-    NonBoolCondition {
-        function: String,
-        found: TypeExpr,
-    },
+    NonBoolCondition { function: String, found: TypeExpr },
 
     #[error("function `{function}` is missing a return statement")]
     MissingReturn { function: String },
+
+    #[error("`match` target in function `{function}` is not matchable: {found:?}")]
+    InvalidMatchTarget { function: String, found: TypeExpr },
+
+    #[error("non-exhaustive `match` in function `{function}`")]
+    NonExhaustiveMatch { function: String },
+
+    #[error("invalid pattern in function `{function}` for scrutinee type {scrutinee:?}")]
+    InvalidPattern { function: String, scrutinee: TypeExpr },
+
+    #[error("duplicate `match` arm in function `{function}`")]
+    DuplicateMatchArm { function: String },
+
+    #[error("move after use of `{name}` in function `{function}`")]
+    MoveAfterUse { function: String, name: String },
+
+    #[error("cannot move `{name}` while it is borrowed as `view` in function `{function}`")]
+    MoveWhileBorrowed { function: String, name: String },
 }
 
 pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
@@ -55,22 +68,27 @@ pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
 }
 
 fn check_function(function: &Function) -> Result<(), TypeCheckError> {
-    let mut locals = BTreeMap::<String, TypeExpr>::new();
+    let mut locals = BTreeMap::<String, LocalState>::new();
 
     for param in &function.inputs {
-        if locals.insert(param.name.clone(), param.ty.clone()).is_some() {
+        if locals.contains_key(&param.name) {
             return Err(TypeCheckError::DuplicateParam {
                 function: function.name.clone(),
                 name: param.name.clone(),
             });
         }
+        locals.insert(param.name.clone(), LocalState {
+            ty: param.ty.clone(),
+            moved: false,
+            borrowed_view_count: 0,
+        });
     }
 
     if function.body.is_empty() && !function.output.is_unit() {
         return Err(TypeCheckError::MissingReturn { function: function.name.clone() });
     }
 
-    let returns = check_block(&function.body, &locals, &function.name, &function.output)?;
+    let returns = check_block(&function.body, &mut locals, &function.name, &function.output)?;
     if !returns && !function.output.is_unit() {
         return Err(TypeCheckError::MissingReturn { function: function.name.clone() });
     }
@@ -80,7 +98,7 @@ fn check_function(function: &Function) -> Result<(), TypeCheckError> {
 
 fn check_block(
     body: &[Stmt],
-    locals: &BTreeMap<String, TypeExpr>,
+    locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
     ret_ty: &TypeExpr,
 ) -> Result<bool, TypeCheckError> {
@@ -96,7 +114,7 @@ fn check_block(
 
 fn check_stmt(
     stmt: &Stmt,
-    locals: &BTreeMap<String, TypeExpr>,
+    locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
     ret_ty: &TypeExpr,
 ) -> Result<bool, TypeCheckError> {
@@ -120,8 +138,10 @@ fn check_stmt(
                     found: cond_ty,
                 });
             }
-            let then_returns = check_block(then_body, locals, function_name, ret_ty)?;
-            let else_returns = check_block(else_body, locals, function_name, ret_ty)?;
+            let mut then_locals = locals.clone();
+            let mut else_locals = locals.clone();
+            let then_returns = check_block(then_body, &mut then_locals, function_name, ret_ty)?;
+            let else_returns = check_block(else_body, &mut else_locals, function_name, ret_ty)?;
             Ok(then_returns && else_returns)
         }
         Stmt::While { cond, body } => {
@@ -132,22 +152,126 @@ fn check_stmt(
                     found: cond_ty,
                 });
             }
-            let _ = check_block(body, locals, function_name, ret_ty)?;
+            let mut body_locals = locals.clone();
+            let _ = check_block(body, &mut body_locals, function_name, ret_ty)?;
             Ok(false)
         }
+        Stmt::Match { scrutinee, arms } => check_match(scrutinee, arms, locals, function_name, ret_ty),
     }
+}
+
+fn check_match(
+    scrutinee: &Expr,
+    arms: &[MatchArm],
+    locals: &mut BTreeMap<String, LocalState>,
+    function_name: &str,
+    ret_ty: &TypeExpr,
+) -> Result<bool, TypeCheckError> {
+    let scrutinee_ty = infer_expr(scrutinee, locals, function_name)?;
+    let mut seen = BTreeSet::new();
+    let mut all_return = true;
+
+    match &scrutinee_ty {
+        TypeExpr::Option(inner) => {
+            for arm in arms {
+                let mut arm_locals = locals.clone();
+                let key = match &arm.pattern {
+                    Pattern::Some(binding) => {
+                        arm_locals.insert(binding.clone(), LocalState {
+                            ty: (**inner).clone(),
+                            moved: false,
+                            borrowed_view_count: 0,
+                        });
+                        "some".to_string()
+                    }
+                    Pattern::None => "none".to_string(),
+                    _ => return Err(TypeCheckError::InvalidPattern {
+                        function: function_name.to_string(),
+                        scrutinee: scrutinee_ty.clone(),
+                    }),
+                };
+                if !seen.insert(key) {
+                    return Err(TypeCheckError::DuplicateMatchArm { function: function_name.to_string() });
+                }
+                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty)?;
+                all_return &= arm_returns;
+            }
+            if !(seen.contains("some") && seen.contains("none")) {
+                return Err(TypeCheckError::NonExhaustiveMatch { function: function_name.to_string() });
+            }
+        }
+        TypeExpr::Result(ok_ty, err_ty) => {
+            for arm in arms {
+                let mut arm_locals = locals.clone();
+                let key = match &arm.pattern {
+                    Pattern::Ok(binding) => {
+                        arm_locals.insert(binding.clone(), LocalState {
+                            ty: (**ok_ty).clone(),
+                            moved: false,
+                            borrowed_view_count: 0,
+                        });
+                        "ok".to_string()
+                    }
+                    Pattern::Err(binding) => {
+                        arm_locals.insert(binding.clone(), LocalState {
+                            ty: (**err_ty).clone(),
+                            moved: false,
+                            borrowed_view_count: 0,
+                        });
+                        "err".to_string()
+                    }
+                    _ => return Err(TypeCheckError::InvalidPattern {
+                        function: function_name.to_string(),
+                        scrutinee: scrutinee_ty.clone(),
+                    }),
+                };
+                if !seen.insert(key) {
+                    return Err(TypeCheckError::DuplicateMatchArm { function: function_name.to_string() });
+                }
+                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty)?;
+                all_return &= arm_returns;
+            }
+            if !(seen.contains("ok") && seen.contains("err")) {
+                return Err(TypeCheckError::NonExhaustiveMatch { function: function_name.to_string() });
+            }
+        }
+        _ => return Err(TypeCheckError::InvalidMatchTarget {
+            function: function_name.to_string(),
+            found: scrutinee_ty,
+        }),
+    }
+
+    Ok(all_return)
 }
 
 fn infer_expr(
     expr: &Expr,
-    locals: &BTreeMap<String, TypeExpr>,
+    locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
 ) -> Result<TypeExpr, TypeCheckError> {
     match expr {
-        Expr::Ident(name) => locals.get(name).cloned().ok_or_else(|| TypeCheckError::UnknownIdentifier {
-            function: function_name.to_string(),
-            name: name.clone(),
-        }),
+        Expr::Ident(name) => {
+            let state = locals.get_mut(name).ok_or_else(|| TypeCheckError::UnknownIdentifier {
+                function: function_name.to_string(),
+                name: name.clone(),
+            })?;
+            if state.moved {
+                return Err(TypeCheckError::MoveAfterUse {
+                    function: function_name.to_string(),
+                    name: name.clone(),
+                });
+            }
+            if state.ty.is_move_only() {
+                if state.borrowed_view_count > 0 {
+                    return Err(TypeCheckError::MoveWhileBorrowed {
+                        function: function_name.to_string(),
+                        name: name.clone(),
+                    });
+                }
+                state.moved = true;
+            }
+            Ok(state.ty.clone())
+        }
         Expr::Int(_) => Ok(TypeExpr::Primitive(PrimitiveType::I32)),
         Expr::Bool(_) => Ok(TypeExpr::Primitive(PrimitiveType::Bool)),
         Expr::Binary { op, lhs, rhs } => {
@@ -166,7 +290,9 @@ fn infer_expr(
                     Ok(lhs_ty)
                 }
                 BinaryOp::Lt | BinaryOp::Le | BinaryOp::Gt | BinaryOp::Ge => {
-                    if lhs_ty != rhs_ty || !lhs_ty.is_integer() {
+                    let l = lhs_ty.strip_wrappers().clone();
+                    let r = rhs_ty.strip_wrappers().clone();
+                    if l != r || !l.is_integer() {
                         return Err(TypeCheckError::InvalidBinaryOperands {
                             function: function_name.to_string(),
                             op: *op,
@@ -177,7 +303,9 @@ fn infer_expr(
                     Ok(TypeExpr::Primitive(PrimitiveType::Bool))
                 }
                 BinaryOp::Eq | BinaryOp::Ne => {
-                    if lhs_ty != rhs_ty {
+                    let l = lhs_ty.strip_wrappers().clone();
+                    let r = rhs_ty.strip_wrappers().clone();
+                    if l != r {
                         return Err(TypeCheckError::InvalidBinaryOperands {
                             function: function_name.to_string(),
                             op: *op,
