@@ -13,20 +13,20 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 66%
-- Ownership-aware type system: 18%
+- Front-end baseline: 71%
+- Ownership-aware type system: 28%
 - HIR/MIR pipeline: 12%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 39%**
+**Overall: 44%**
 
 ## Current work item
 
 Current work item definition:
-- add `own` / `view` type syntax
-- add first move-after-use detection
-- prepare next ownership slice
+- add function call expressions
+- add first `view` borrow generation for call arguments
+- reject move while borrowed
 
 **Current work item: 100%**

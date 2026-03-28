@@ -1,0 +1,17 @@
+module demo.view_call
+
+func inspect
+    input x: view i32
+    output bool
+    effect pure
+begin
+    return x == x
+end
+
+func caller
+    input y: own i32
+    output bool
+    effect pure
+begin
+    return inspect(y)
+end

@@ -10,6 +10,12 @@ struct LocalState {
     borrowed_view_count: u32,
 }
 
+#[derive(Debug, Clone)]
+struct FuncSig {
+    inputs: Vec<TypeExpr>,
+    output: TypeExpr,
+}
+
 #[derive(Debug, Error)]
 pub enum TypeCheckError {
     #[error("duplicate function name `{name}`")]
@@ -20,6 +26,12 @@ pub enum TypeCheckError {
 
     #[error("unknown identifier `{name}` in function `{function}`")]
     UnknownIdentifier { function: String, name: String },
+
+    #[error("unknown function `{name}`")]
+    UnknownFunction { name: String },
+
+    #[error("argument count mismatch calling `{callee}`: expected {expected}, found {found}")]
+    ArgCountMismatch { callee: String, expected: usize, found: usize },
 
     #[error("type mismatch in function `{function}`: expected {expected:?}, found {found:?}")]
     TypeMismatch { function: String, expected: TypeExpr, found: TypeExpr },
@@ -54,20 +66,26 @@ pub enum TypeCheckError {
 
 pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
     let mut names = BTreeSet::new();
+    let mut funcs = BTreeMap::<String, FuncSig>::new();
+
     for function in &module.functions {
         if !names.insert(function.name.clone()) {
             return Err(TypeCheckError::DuplicateFunction { name: function.name.clone() });
         }
+        funcs.insert(function.name.clone(), FuncSig {
+            inputs: function.inputs.iter().map(|p| p.ty.clone()).collect(),
+            output: function.output.clone(),
+        });
     }
 
     for function in &module.functions {
-        check_function(function)?;
+        check_function(function, &funcs)?;
     }
 
     Ok(())
 }
 
-fn check_function(function: &Function) -> Result<(), TypeCheckError> {
+fn check_function(function: &Function, funcs: &BTreeMap<String, FuncSig>) -> Result<(), TypeCheckError> {
     let mut locals = BTreeMap::<String, LocalState>::new();
 
     for param in &function.inputs {
@@ -88,7 +106,7 @@ fn check_function(function: &Function) -> Result<(), TypeCheckError> {
         return Err(TypeCheckError::MissingReturn { function: function.name.clone() });
     }
 
-    let returns = check_block(&function.body, &mut locals, &function.name, &function.output)?;
+    let returns = check_block(&function.body, &mut locals, &function.name, &function.output, funcs)?;
     if !returns && !function.output.is_unit() {
         return Err(TypeCheckError::MissingReturn { function: function.name.clone() });
     }
@@ -101,10 +119,11 @@ fn check_block(
     locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
     ret_ty: &TypeExpr,
+    funcs: &BTreeMap<String, FuncSig>,
 ) -> Result<bool, TypeCheckError> {
     let mut saw_return = false;
     for stmt in body {
-        let stmt_returns = check_stmt(stmt, locals, function_name, ret_ty)?;
+        let stmt_returns = check_stmt(stmt, locals, function_name, ret_ty, funcs)?;
         if stmt_returns {
             saw_return = true;
         }
@@ -117,10 +136,11 @@ fn check_stmt(
     locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
     ret_ty: &TypeExpr,
+    funcs: &BTreeMap<String, FuncSig>,
 ) -> Result<bool, TypeCheckError> {
     match stmt {
         Stmt::Return(expr) => {
-            let ty = infer_expr(expr, locals, function_name)?;
+            let ty = infer_expr(expr, locals, function_name, funcs)?;
             if &ty != ret_ty {
                 return Err(TypeCheckError::TypeMismatch {
                     function: function_name.to_string(),
@@ -131,7 +151,7 @@ fn check_stmt(
             Ok(true)
         }
         Stmt::If { cond, then_body, else_body } => {
-            let cond_ty = infer_expr(cond, locals, function_name)?;
+            let cond_ty = infer_expr(cond, locals, function_name, funcs)?;
             if !cond_ty.is_bool() {
                 return Err(TypeCheckError::NonBoolCondition {
                     function: function_name.to_string(),
@@ -140,12 +160,12 @@ fn check_stmt(
             }
             let mut then_locals = locals.clone();
             let mut else_locals = locals.clone();
-            let then_returns = check_block(then_body, &mut then_locals, function_name, ret_ty)?;
-            let else_returns = check_block(else_body, &mut else_locals, function_name, ret_ty)?;
+            let then_returns = check_block(then_body, &mut then_locals, function_name, ret_ty, funcs)?;
+            let else_returns = check_block(else_body, &mut else_locals, function_name, ret_ty, funcs)?;
             Ok(then_returns && else_returns)
         }
         Stmt::While { cond, body } => {
-            let cond_ty = infer_expr(cond, locals, function_name)?;
+            let cond_ty = infer_expr(cond, locals, function_name, funcs)?;
             if !cond_ty.is_bool() {
                 return Err(TypeCheckError::NonBoolCondition {
                     function: function_name.to_string(),
@@ -153,10 +173,10 @@ fn check_stmt(
                 });
             }
             let mut body_locals = locals.clone();
-            let _ = check_block(body, &mut body_locals, function_name, ret_ty)?;
+            let _ = check_block(body, &mut body_locals, function_name, ret_ty, funcs)?;
             Ok(false)
         }
-        Stmt::Match { scrutinee, arms } => check_match(scrutinee, arms, locals, function_name, ret_ty),
+        Stmt::Match { scrutinee, arms } => check_match(scrutinee, arms, locals, function_name, ret_ty, funcs),
     }
 }
 
@@ -166,8 +186,9 @@ fn check_match(
     locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
     ret_ty: &TypeExpr,
+    funcs: &BTreeMap<String, FuncSig>,
 ) -> Result<bool, TypeCheckError> {
-    let scrutinee_ty = infer_expr(scrutinee, locals, function_name)?;
+    let scrutinee_ty = infer_expr(scrutinee, locals, function_name, funcs)?;
     let mut seen = BTreeSet::new();
     let mut all_return = true;
 
@@ -177,23 +198,16 @@ fn check_match(
                 let mut arm_locals = locals.clone();
                 let key = match &arm.pattern {
                     Pattern::Some(binding) => {
-                        arm_locals.insert(binding.clone(), LocalState {
-                            ty: (**inner).clone(),
-                            moved: false,
-                            borrowed_view_count: 0,
-                        });
+                        arm_locals.insert(binding.clone(), LocalState { ty: (**inner).clone(), moved: false, borrowed_view_count: 0 });
                         "some".to_string()
                     }
                     Pattern::None => "none".to_string(),
-                    _ => return Err(TypeCheckError::InvalidPattern {
-                        function: function_name.to_string(),
-                        scrutinee: scrutinee_ty.clone(),
-                    }),
+                    _ => return Err(TypeCheckError::InvalidPattern { function: function_name.to_string(), scrutinee: scrutinee_ty.clone() }),
                 };
                 if !seen.insert(key) {
                     return Err(TypeCheckError::DuplicateMatchArm { function: function_name.to_string() });
                 }
-                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty)?;
+                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty, funcs)?;
                 all_return &= arm_returns;
             }
             if !(seen.contains("some") && seen.contains("none")) {
@@ -205,40 +219,26 @@ fn check_match(
                 let mut arm_locals = locals.clone();
                 let key = match &arm.pattern {
                     Pattern::Ok(binding) => {
-                        arm_locals.insert(binding.clone(), LocalState {
-                            ty: (**ok_ty).clone(),
-                            moved: false,
-                            borrowed_view_count: 0,
-                        });
+                        arm_locals.insert(binding.clone(), LocalState { ty: (**ok_ty).clone(), moved: false, borrowed_view_count: 0 });
                         "ok".to_string()
                     }
                     Pattern::Err(binding) => {
-                        arm_locals.insert(binding.clone(), LocalState {
-                            ty: (**err_ty).clone(),
-                            moved: false,
-                            borrowed_view_count: 0,
-                        });
+                        arm_locals.insert(binding.clone(), LocalState { ty: (**err_ty).clone(), moved: false, borrowed_view_count: 0 });
                         "err".to_string()
                     }
-                    _ => return Err(TypeCheckError::InvalidPattern {
-                        function: function_name.to_string(),
-                        scrutinee: scrutinee_ty.clone(),
-                    }),
+                    _ => return Err(TypeCheckError::InvalidPattern { function: function_name.to_string(), scrutinee: scrutinee_ty.clone() }),
                 };
                 if !seen.insert(key) {
                     return Err(TypeCheckError::DuplicateMatchArm { function: function_name.to_string() });
                 }
-                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty)?;
+                let arm_returns = check_block(&arm.body, &mut arm_locals, function_name, ret_ty, funcs)?;
                 all_return &= arm_returns;
             }
             if !(seen.contains("ok") && seen.contains("err")) {
                 return Err(TypeCheckError::NonExhaustiveMatch { function: function_name.to_string() });
             }
         }
-        _ => return Err(TypeCheckError::InvalidMatchTarget {
-            function: function_name.to_string(),
-            found: scrutinee_ty,
-        }),
+        _ => return Err(TypeCheckError::InvalidMatchTarget { function: function_name.to_string(), found: scrutinee_ty }),
     }
 
     Ok(all_return)
@@ -248,35 +248,57 @@ fn infer_expr(
     expr: &Expr,
     locals: &mut BTreeMap<String, LocalState>,
     function_name: &str,
+    funcs: &BTreeMap<String, FuncSig>,
 ) -> Result<TypeExpr, TypeCheckError> {
     match expr {
-        Expr::Ident(name) => {
-            let state = locals.get_mut(name).ok_or_else(|| TypeCheckError::UnknownIdentifier {
-                function: function_name.to_string(),
-                name: name.clone(),
-            })?;
-            if state.moved {
-                return Err(TypeCheckError::MoveAfterUse {
-                    function: function_name.to_string(),
-                    name: name.clone(),
-                });
-            }
-            if state.ty.is_move_only() {
-                if state.borrowed_view_count > 0 {
-                    return Err(TypeCheckError::MoveWhileBorrowed {
-                        function: function_name.to_string(),
-                        name: name.clone(),
-                    });
-                }
-                state.moved = true;
-            }
-            Ok(state.ty.clone())
-        }
+        Expr::Ident(name) => use_ident(name, locals, function_name, false),
         Expr::Int(_) => Ok(TypeExpr::Primitive(PrimitiveType::I32)),
         Expr::Bool(_) => Ok(TypeExpr::Primitive(PrimitiveType::Bool)),
+        Expr::Call { callee, args } => {
+            let sig = funcs.get(callee).cloned().ok_or_else(|| TypeCheckError::UnknownFunction { name: callee.clone() })?;
+            if sig.inputs.len() != args.len() {
+                return Err(TypeCheckError::ArgCountMismatch { callee: callee.clone(), expected: sig.inputs.len(), found: args.len() });
+            }
+
+            let borrowed_names = collect_borrowed_idents(args, &sig.inputs);
+            for name in &borrowed_names {
+                if let Some(local) = locals.get_mut(name) {
+                    local.borrowed_view_count += 1;
+                }
+            }
+
+            for (arg, expected) in args.iter().zip(sig.inputs.iter()) {
+                let actual = infer_call_arg(arg, expected, locals, function_name, funcs)?;
+                let ok = if expected.is_view() {
+                    actual.can_view_as(expected)
+                } else {
+                    &actual == expected
+                };
+                if !ok {
+                    for name in &borrowed_names {
+                        if let Some(local) = locals.get_mut(name) {
+                            local.borrowed_view_count = local.borrowed_view_count.saturating_sub(1);
+                        }
+                    }
+                    return Err(TypeCheckError::TypeMismatch {
+                        function: function_name.to_string(),
+                        expected: expected.clone(),
+                        found: actual,
+                    });
+                }
+            }
+
+            for name in &borrowed_names {
+                if let Some(local) = locals.get_mut(name) {
+                    local.borrowed_view_count = local.borrowed_view_count.saturating_sub(1);
+                }
+            }
+
+            Ok(sig.output)
+        }
         Expr::Binary { op, lhs, rhs } => {
-            let lhs_ty = infer_expr(lhs, locals, function_name)?;
-            let rhs_ty = infer_expr(rhs, locals, function_name)?;
+            let lhs_ty = infer_expr(lhs, locals, function_name, funcs)?;
+            let rhs_ty = infer_expr(rhs, locals, function_name, funcs)?;
             match op {
                 BinaryOp::Add | BinaryOp::Sub | BinaryOp::Mul | BinaryOp::Div => {
                     if lhs_ty != rhs_ty || !lhs_ty.is_integer() {
@@ -318,4 +340,69 @@ fn infer_expr(
             }
         }
     }
+}
+
+fn infer_call_arg(
+    expr: &Expr,
+    expected: &TypeExpr,
+    locals: &mut BTreeMap<String, LocalState>,
+    function_name: &str,
+    funcs: &BTreeMap<String, FuncSig>,
+) -> Result<TypeExpr, TypeCheckError> {
+    if expected.is_view() {
+        match expr {
+            Expr::Ident(name) => use_ident(name, locals, function_name, true),
+            _ => infer_expr(expr, locals, function_name, funcs),
+        }
+    } else {
+        infer_expr(expr, locals, function_name, funcs)
+    }
+}
+
+fn collect_borrowed_idents(args: &[Expr], expected: &[TypeExpr]) -> Vec<String> {
+    let mut out = Vec::new();
+    for (arg, exp) in args.iter().zip(expected.iter()) {
+        if exp.is_view() {
+            if let Expr::Ident(name) = arg {
+                out.push(name.clone());
+            }
+        }
+    }
+    out
+}
+
+fn use_ident(
+    name: &str,
+    locals: &mut BTreeMap<String, LocalState>,
+    function_name: &str,
+    as_view: bool,
+) -> Result<TypeExpr, TypeCheckError> {
+    let state = locals.get_mut(name).ok_or_else(|| TypeCheckError::UnknownIdentifier {
+        function: function_name.to_string(),
+        name: name.to_string(),
+    })?;
+
+    if state.moved {
+        return Err(TypeCheckError::MoveAfterUse {
+            function: function_name.to_string(),
+            name: name.to_string(),
+        });
+    }
+
+    if as_view {
+        let base = state.ty.strip_wrappers().clone();
+        return Ok(TypeExpr::View(Box::new(base)));
+    }
+
+    if state.ty.is_move_only() {
+        if state.borrowed_view_count > 0 {
+            return Err(TypeCheckError::MoveWhileBorrowed {
+                function: function_name.to_string(),
+                name: name.to_string(),
+            });
+        }
+        state.moved = true;
+    }
+
+    Ok(state.ty.clone())
 }

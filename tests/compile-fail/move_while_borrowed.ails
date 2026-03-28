@@ -1,0 +1,24 @@
+module demo.move_while_borrowed
+
+func inspect
+    input x: view i32
+    output bool
+    effect pure
+begin
+    return x == x
+end
+
+func bad
+    input y: own i32
+    output own i32
+    effect pure
+begin
+    if inspect(y) then
+    begin
+        return y
+    end
+    else
+    begin
+        return y
+    end
+end

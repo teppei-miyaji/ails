@@ -45,6 +45,7 @@ Parser support currently includes:
 - boolean literals
 - arithmetic operators
 - comparison operators
+- function call expressions
 
 Type checker support currently includes:
 
@@ -55,6 +56,8 @@ Type checker support currently includes:
 - return type checking
 - `if` condition must be `bool`
 - `while` condition must be `bool`
+- first borrow generation for `view` call arguments
+- move-while-borrowed rejection
 
 ## Not implemented yet
 

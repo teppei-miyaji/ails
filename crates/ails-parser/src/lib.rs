@@ -334,7 +334,26 @@ impl Parser {
 
     fn parse_primary(&mut self) -> Result<Expr, ParseError> {
         match self.next().kind {
-            TokenKind::Ident(name) => Ok(Expr::Ident(name)),
+            TokenKind::Ident(name) => {
+                if matches!(self.peek(), TokenKind::LParen) {
+                    self.next(); // (
+                    let mut args = Vec::new();
+                    if !matches!(self.peek(), TokenKind::RParen) {
+                        loop {
+                            args.push(self.parse_expr()?);
+                            if matches!(self.peek(), TokenKind::Comma) {
+                                self.next();
+                                continue;
+                            }
+                            break;
+                        }
+                    }
+                    self.expect_keyword(TokenKind::RParen, "`)`")?;
+                    Ok(Expr::Call { callee: name, args })
+                } else {
+                    Ok(Expr::Ident(name))
+                }
+            }
             TokenKind::Int(text) => text.parse::<i64>().map(Expr::Int).map_err(|_| ParseError::InvalidInt(text)),
             TokenKind::True => Ok(Expr::Bool(true)),
             TokenKind::False => Ok(Expr::Bool(false)),
@@ -416,9 +435,7 @@ impl Parser {
     }
 
     fn expect_optional_newline(&mut self) {
-        if matches!(self.peek(), TokenKind::Newline) {
-            self.next();
-        }
+        if matches!(self.peek(), TokenKind::Newline) { self.next(); }
     }
 
     fn expect_keyword(&mut self, expected_kind: TokenKind, expected: &'static str) -> Result<(), ParseError> {
@@ -426,23 +443,15 @@ impl Parser {
         if std::mem::discriminant(&token.kind) == std::mem::discriminant(&expected_kind) {
             Ok(())
         } else {
-            Err(ParseError::Expected {
-                expected,
-                found: token.kind,
-                index: self.index.saturating_sub(1),
-            })
+            Err(ParseError::Expected { expected, found: token.kind, index: self.index.saturating_sub(1) })
         }
     }
 
     fn skip_newlines(&mut self) {
-        while matches!(self.peek(), TokenKind::Newline) {
-            self.next();
-        }
+        while matches!(self.peek(), TokenKind::Newline) { self.next(); }
     }
 
-    fn at_eof(&self) -> bool {
-        matches!(self.peek(), TokenKind::Eof)
-    }
+    fn at_eof(&self) -> bool { matches!(self.peek(), TokenKind::Eof) }
 
     fn at_any(&self, kinds: &[TokenKind]) -> bool {
         kinds.iter().any(|k| std::mem::discriminant(k) == std::mem::discriminant(self.peek()))

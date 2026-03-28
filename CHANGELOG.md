@@ -24,3 +24,9 @@
 - Extend AST type model with `Own` and `View`
 - Add first move-after-use detection in type checker
 - Add first ownership-oriented diagnostics
+
+## 0.1.0-draft-v0.9
+- Add parser support for function call expressions
+- Add function signature table to type checker
+- Add first borrow generation for `view` call arguments
+- Add move-while-borrowed rejection

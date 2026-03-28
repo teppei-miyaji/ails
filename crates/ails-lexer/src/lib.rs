@@ -35,6 +35,9 @@ pub enum TokenKind {
     Int(String),
     Colon,
     Dot,
+    Comma,
+    LParen,
+    RParen,
     Plus,
     Minus,
     Star,
@@ -74,6 +77,9 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
             '#' => { while i < bytes.len() && bytes[i] != b'\n' { i += 1; } }
             ':' => { out.push(Token { kind: TokenKind::Colon, offset: i }); i += 1; }
             '.' => { out.push(Token { kind: TokenKind::Dot, offset: i }); i += 1; }
+            ',' => { out.push(Token { kind: TokenKind::Comma, offset: i }); i += 1; }
+            '(' => { out.push(Token { kind: TokenKind::LParen, offset: i }); i += 1; }
+            ')' => { out.push(Token { kind: TokenKind::RParen, offset: i }); i += 1; }
             '+' => { out.push(Token { kind: TokenKind::Plus, offset: i }); i += 1; }
             '-' => { out.push(Token { kind: TokenKind::Minus, offset: i }); i += 1; }
             '*' => { out.push(Token { kind: TokenKind::Star, offset: i }); i += 1; }

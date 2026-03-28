@@ -16,6 +16,7 @@ Public draft repository with:
 - `option`
 - `own`
 - `view`
+- function call expressions
 
 ## Immediate priorities
 
@@ -26,12 +27,13 @@ Public draft repository with:
 - [x] Extend type checker with `match` exhaustiveness checks
 - [x] Add `own` / `view` surface syntax to parser
 - [x] Add first move-after-use detection
-- [ ] Add borrow/update conflict detection
+- [x] Add first borrow generation for `view` call arguments
+- [x] Add move-while-borrowed rejection
 - [ ] Add compile-pass / compile-fail ownership examples
 
 ### P1
-- [ ] Refine ownership state tracking in type checker
-- [ ] Add `view` borrow creation semantics for arguments and pattern bindings
+- [ ] Add borrow/update conflict detection for future assignment support
+- [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Generalize `match` to named sum types
 

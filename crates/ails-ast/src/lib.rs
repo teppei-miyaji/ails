@@ -87,6 +87,10 @@ pub enum Expr {
     Ident(String),
     Int(i64),
     Bool(bool),
+    Call {
+        callee: String,
+        args: Vec<Expr>,
+    },
     Binary {
         op: BinaryOp,
         lhs: Box<Expr>,
