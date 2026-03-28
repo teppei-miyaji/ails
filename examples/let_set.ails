@@ -1,0 +1,11 @@
+module demo.let_set
+
+func simple
+    input x: i32
+    output i32
+    effect pure
+begin
+    let y: i32 = x
+    set y = y + 1
+    return y
+end

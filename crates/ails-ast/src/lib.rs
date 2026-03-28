@@ -51,6 +51,15 @@ pub enum Effect {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Stmt {
+    Let {
+        name: String,
+        ty: TypeExpr,
+        expr: Expr,
+    },
+    Set {
+        name: String,
+        expr: Expr,
+    },
     Return(Expr),
     If {
         cond: Expr,

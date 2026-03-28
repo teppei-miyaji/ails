@@ -34,6 +34,7 @@ Parser support currently includes:
 - `effect`
 - `begin` / `end`
 - `return`
+- `let` / `set`
 - `if ... then ... else`
 - `while`
 - `match`
@@ -58,6 +59,7 @@ Type checker support currently includes:
 - `while` condition must be `bool`
 - first borrow generation for `view` call arguments
 - move-while-borrowed rejection
+- first borrow/update conflict rejection
 
 ## Not implemented yet
 

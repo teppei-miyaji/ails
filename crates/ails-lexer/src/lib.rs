@@ -10,6 +10,8 @@ pub enum TokenKind {
     Begin,
     End,
     Return,
+    Let,
+    Set,
     If,
     Then,
     Else,
@@ -46,6 +48,7 @@ pub enum TokenKind {
     Le,
     Gt,
     Ge,
+    Eq,
     EqEq,
     Ne,
     Newline,
@@ -102,7 +105,7 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                 if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                     out.push(Token { kind: TokenKind::EqEq, offset: i }); i += 2;
                 } else {
-                    return Err(LexError::UnexpectedChar { ch, offset: i });
+                    out.push(Token { kind: TokenKind::Eq, offset: i }); i += 1;
                 }
             }
             '!' => {
@@ -133,6 +136,8 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                     "begin" => TokenKind::Begin,
                     "end" => TokenKind::End,
                     "return" => TokenKind::Return,
+                    "let" => TokenKind::Let,
+                    "set" => TokenKind::Set,
                     "if" => TokenKind::If,
                     "then" => TokenKind::Then,
                     "else" => TokenKind::Else,

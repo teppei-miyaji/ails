@@ -9,6 +9,8 @@ Public draft repository with:
 - minimal HIR skeleton
 - minimal type checker
 - CLI driver
+- `let`
+- `set`
 - `if`
 - `while`
 - `match`
@@ -29,13 +31,15 @@ Public draft repository with:
 - [x] Add first move-after-use detection
 - [x] Add first borrow generation for `view` call arguments
 - [x] Add move-while-borrowed rejection
-- [ ] Add compile-pass / compile-fail ownership examples
+- [x] Add `let` / `set`
+- [x] Add first borrow/update conflict rejection
+- [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
-- [ ] Add borrow/update conflict detection for future assignment support
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Generalize `match` to named sum types
+- [ ] Add lexical state merge rules for ownership across branches
 
 ### P2
 - [ ] Lower AST into non-placeholder HIR

@@ -24,6 +24,9 @@ pub enum TypeCheckError {
     #[error("duplicate parameter name `{name}` in function `{function}`")]
     DuplicateParam { function: String, name: String },
 
+    #[error("duplicate local name `{name}` in function `{function}`")]
+    DuplicateLocal { function: String, name: String },
+
     #[error("unknown identifier `{name}` in function `{function}`")]
     UnknownIdentifier { function: String, name: String },
 
@@ -62,6 +65,9 @@ pub enum TypeCheckError {
 
     #[error("cannot move `{name}` while it is borrowed as `view` in function `{function}`")]
     MoveWhileBorrowed { function: String, name: String },
+
+    #[error("cannot update `{name}` while it is borrowed as `view` in function `{function}`")]
+    UpdateWhileBorrowed { function: String, name: String },
 }
 
 pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
@@ -139,6 +145,52 @@ fn check_stmt(
     funcs: &BTreeMap<String, FuncSig>,
 ) -> Result<bool, TypeCheckError> {
     match stmt {
+        Stmt::Let { name, ty, expr } => {
+            if locals.contains_key(name) {
+                return Err(TypeCheckError::DuplicateLocal {
+                    function: function_name.to_string(),
+                    name: name.clone(),
+                });
+            }
+            let actual = infer_expr(expr, locals, function_name, funcs)?;
+            if &actual != ty {
+                return Err(TypeCheckError::TypeMismatch {
+                    function: function_name.to_string(),
+                    expected: ty.clone(),
+                    found: actual,
+                });
+            }
+            locals.insert(name.clone(), LocalState {
+                ty: ty.clone(),
+                moved: false,
+                borrowed_view_count: 0,
+            });
+            Ok(false)
+        }
+        Stmt::Set { name, expr } => {
+            let state = locals.get(name).cloned().ok_or_else(|| TypeCheckError::UnknownIdentifier {
+                function: function_name.to_string(),
+                name: name.clone(),
+            })?;
+            if state.borrowed_view_count > 0 {
+                return Err(TypeCheckError::UpdateWhileBorrowed {
+                    function: function_name.to_string(),
+                    name: name.clone(),
+                });
+            }
+            let actual = infer_expr(expr, locals, function_name, funcs)?;
+            if actual != state.ty {
+                return Err(TypeCheckError::TypeMismatch {
+                    function: function_name.to_string(),
+                    expected: state.ty,
+                    found: actual,
+                });
+            }
+            if let Some(slot) = locals.get_mut(name) {
+                slot.moved = false;
+            }
+            Ok(false)
+        }
         Stmt::Return(expr) => {
             let ty = infer_expr(expr, locals, function_name, funcs)?;
             if &ty != ret_ty {

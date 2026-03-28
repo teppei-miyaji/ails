@@ -30,3 +30,9 @@
 - Add function signature table to type checker
 - Add first borrow generation for `view` call arguments
 - Add move-while-borrowed rejection
+
+## 0.1.0-draft-v0.10
+- Add parser support for `let` and `set`
+- Add AST nodes for local binding and reassignment
+- Add local symbol insertion in type checker
+- Add first borrow/update conflict rejection
