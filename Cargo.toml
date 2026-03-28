@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/ails-ast",
+  "crates/ails-lexer",
+  "crates/ails-parser",
+  "crates/ails-driver",
+  "crates/ails-hir",
+  "crates/ails-typecheck",
+  "crates/ails-mir",
+  "crates/ails-codegen",
+]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+license = "Apache-2.0"
+authors = ["OpenAI"]
+repository = "https://github.com/your-org/ails"
+rust-version = "1.78"
+
+[workspace.dependencies]
+thiserror = "1.0"

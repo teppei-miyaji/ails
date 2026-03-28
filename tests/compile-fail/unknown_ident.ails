@@ -1,0 +1,9 @@
+module demo.unknown_ident
+
+func bad
+    input a: i32
+    output i32
+    effect pure
+begin
+    return b + 1
+end

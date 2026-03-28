@@ -1,0 +1,11 @@
+[package]
+name = "ails-driver"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+ails-lexer = { path = "../ails-lexer" }
+ails-parser = { path = "../ails-parser" }
+ails-typecheck = { path = "../ails-typecheck" }
+ails-hir = { path = "../ails-hir" }

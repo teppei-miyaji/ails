@@ -1,0 +1,20 @@
+module demo.while_demo
+
+func spin
+    input flag: bool
+    output unit
+    effect pure
+begin
+    while flag
+    begin
+        if false then
+        begin
+            return 0
+        end
+        else
+        begin
+            return 0
+        end
+    end
+    return 0
+end

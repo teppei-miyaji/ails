@@ -1,0 +1,16 @@
+module demo.non_bool_condition
+
+func bad
+    input a: i32
+    output i32
+    effect pure
+begin
+    if a then
+    begin
+        return a
+    end
+    else
+    begin
+        return a
+    end
+end

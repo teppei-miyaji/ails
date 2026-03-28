@@ -1,0 +1,10 @@
+module demo.add
+
+func add
+    input a: i32
+    input b: i32
+    output i32
+    effect pure
+begin
+    return a + b
+end

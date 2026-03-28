@@ -1,0 +1,9 @@
+module demo.bad_return
+
+func bad
+    input a: i32
+    output bool
+    effect pure
+begin
+    return a
+end

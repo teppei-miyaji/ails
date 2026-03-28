@@ -1,0 +1,95 @@
+# AILS
+
+**AI-Oriented Low-level Safe Language**
+
+This repository contains a public draft compiler skeleton for AILS.
+
+## License
+
+This repository is licensed under **Apache-2.0**.  
+See `LICENSE` and `NOTICE`.
+
+## Status
+
+This project is **draft / experimental**.  
+It is intended to be published as a public GitHub repository and evolved incrementally.
+
+## Implemented in this public package
+
+- lexer
+- parser
+- AST
+- minimal HIR skeleton
+- minimal type checker
+- CLI driver
+
+Parser support currently includes:
+
+- `module`
+- `func`
+- `input`
+- `output`
+- `effect`
+- `begin` / `end`
+- `return`
+- `if ... then ... else`
+- `while`
+- integer literals
+- boolean literals
+- arithmetic operators
+- comparison operators
+
+Type checker support currently includes:
+
+- duplicate function detection
+- duplicate parameter detection
+- unknown identifier detection
+- basic integer expression typing
+- return type checking
+- `if` condition must be `bool`
+- `while` condition must be `bool`
+
+## Not implemented yet
+
+- ownership checking for `own` / `view`
+- `match`
+- MIR
+- code generation
+- x86_64 backend
+- AArch64 backend
+
+## Build
+
+```bash
+cargo build
+```
+
+## Run
+
+```bash
+cargo run -p ails-driver -- tokens examples/add.ails
+cargo run -p ails-driver -- parse examples/if_demo.ails
+cargo run -p ails-driver -- check examples/if_demo.ails
+cargo run -p ails-driver -- hir examples/if_demo.ails
+```
+
+## Publish to GitHub from Windows Command Prompt
+
+Create an empty public repository on GitHub first, then run:
+
+```bat
+git init
+git branch -M main
+git add .
+git commit -m "Initial public draft of AILS compiler skeleton"
+
+gh auth login
+git remote add origin https://github.com/YOUR_ACCOUNT/ails.git
+git push -u origin main
+```
+
+If you do not use `gh`, you may use HTTPS with a Personal Access Token instead of a password.
+
+## Repository intent
+
+This repository is structured so it can be pushed to GitHub directly and iterated in public.
