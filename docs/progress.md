@@ -15,20 +15,20 @@
 
 - Public repository / packaging / licensing: 100%
 - Front-end baseline: 100%
-- Canonical spec set: 78%
-- Ownership-aware type system: 62%
-- HIR/MIR pipeline: 50%
+- Canonical spec set: 86%
+- Ownership-aware type system: 66%
+- HIR/MIR pipeline: 54%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 82%**
+**Overall: 86%**
 
 ## Current work item
 
 Current work item definition:
-- make the spec reviewable
-- resolve payload ownership, call-borrow lifetime, layout abstraction, and validation responsibilities
-- reach review-ready spec quality
+- close major review ambiguities
+- prepare review-ready v0.18 canonical spec
+- make review prompts and boundaries explicit
 
 **Current work item: 100%**

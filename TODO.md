@@ -11,6 +11,7 @@ Public draft repository with:
 - minimal type checker
 - CLI driver
 - canonical spec draft set
+- review-ready spec milestone
 - `import`
 - `type`
 - `case`
@@ -30,29 +31,15 @@ Public draft repository with:
 ## Immediate priorities
 
 ### P0
-- [x] Add `match` parsing support
-- [x] Add `result` / `option` syntax support in parser
-- [x] Extend AST for `match` and pattern forms
-- [x] Extend type checker with `match` exhaustiveness checks
-- [x] Add `own` / `view` surface syntax to parser
-- [x] Add first move-after-use detection
-- [x] Add first borrow generation for `view` call arguments
-- [x] Add move-while-borrowed rejection
-- [x] Add `let` / `set`
-- [x] Add first borrow/update conflict rejection
-- [x] Add first branch ownership-state checking
-- [x] Add first loop ownership-state checking
-- [x] Replace placeholder HIR with real lowered structures
-- [x] Add initial MIR data structures
-- [x] Lower `if` / `while` / `match` into MIR CFG form
-- [x] Add `import` / `type` / `case` / `field` / `const`
-- [x] Generalize `match` to named sum types
 - [x] Add canonical spec draft set
 - [x] Canonicalize expression-scoped call borrow lifetime
 - [x] Canonicalize move-binding payload semantics for by-value match
+- [x] Forbid partial move in v0.1
+- [x] Forbid `view` return types in v0.1
 - [x] Add abstract named sum layout document
 - [x] Add HIR/MIR validation responsibility mapping
-- [ ] Decide future explicit syntax for borrow-binding pattern payloads
+- [x] Clarify MIR drop responsibility boundary
+- [ ] Obtain external review for v0.18 canonical spec
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology

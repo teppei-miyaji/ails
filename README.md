@@ -132,3 +132,8 @@ This spec set should be treated as the source of truth when implementation and d
 ## Reviewable spec milestone
 
 The repository now contains a reviewable canonical spec milestone under `spec/`, including ownership payload semantics, call-borrow lifetime, named sum abstract layout, MIR validation requirements, and implementation mapping.
+
+
+## v0.18 review focus
+
+v0.18 tightens pattern payload ownership, forbids `view` return types for v0.1, and clarifies MIR drop responsibility boundaries.

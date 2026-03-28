@@ -25,6 +25,7 @@ Responsible for:
 - match exhaustiveness
 - ownership legality at source-level
 - branch/loop join validation
+- v0.1 prohibition of `view` return types
 
 Not responsible for:
 - CFG construction
@@ -42,6 +43,10 @@ Responsible for:
 - explicit control-flow graph structure
 - block/terminator validity
 - representation suitable for later validation and backend stages
+
+Not responsible for:
+- deciding final physical backend layout
+- silently inventing ownership semantics absent from spec
 
 ## Rule
 

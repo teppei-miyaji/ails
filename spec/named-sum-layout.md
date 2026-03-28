@@ -3,7 +3,7 @@
 ## 1. Status
 
 Abstract canonical model only.
-This document does not yet define a concrete backend ABI.
+This document does not define a concrete backend ABI.
 
 ## 2. Abstract model
 
@@ -18,16 +18,17 @@ Implementations must preserve:
 - declared field order within a case
 - payload field type identity
 
-## 4. What is intentionally not fixed yet
+## 4. v0.1 boundary
 
-Not yet canonical:
+For v0.1, the following are intentionally not fixed:
 - concrete byte layout
 - discriminant size
 - niche optimization
 - field padding strategy
 - backend ABI lowering
 
-## 5. Reason
+Therefore the language spec fixes semantic layout only, not physical layout.
 
-These details belong to the later backend contract.
-At the language level, only discriminant+payload semantics are canonical.
+## 5. Future backend handoff
+
+A later backend contract may choose a concrete representation, but it must preserve the semantic guarantees above.

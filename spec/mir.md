@@ -48,13 +48,21 @@ At minimum it must verify:
 - match arm targets are valid blocks
 - block graph is structurally well-formed
 
-## 5. Ownership relation to MIR
+## 5. Drop responsibility boundary
 
 Current canonical position:
 - ownership legality is primarily established before MIR
-- MIR validation may later check consistency of inserted drop actions and control-flow obligations
-- MIR is not yet required to re-prove the whole ownership model
+- HIR does not contain explicit drop operations
+- MIR lowering itself is not required to decide final drop insertion points
+- drop insertion is a distinct post-lowering pass
+- MIR validation before drop insertion checks structural correctness
+- MIR validation after drop insertion must additionally check drop-placement consistency
 
-## 6. Planned drop insertion
+## 6. v0.1 guarantee
+
+v0.1 does **not** require MIR to encode a full linear type proof.
+It only requires MIR to be suitable for a later drop-insertion and validation pipeline.
+
+## 7. Planned drop insertion
 
 Drop insertion is not part of current canonical MIR, but will be a post-lowering pass.

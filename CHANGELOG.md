@@ -74,3 +74,9 @@
 - Canonicalize move-binding payload semantics for by-value pattern matching
 - Add abstract named sum layout document
 - Add implementation mapping and MIR validation requirements
+
+## 0.1.0-draft-v0.18
+- Forbid partial move in pattern payload semantics for v0.1
+- Forbid `view` return types in v0.1
+- Clarify MIR drop responsibility as a post-lowering pass boundary
+- Add repository-local Gemini review prompt for v0.18 spec review
