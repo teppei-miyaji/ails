@@ -13,19 +13,19 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 80%
-- Ownership-aware type system: 44%
+- Front-end baseline: 81%
+- Ownership-aware type system: 50%
 - HIR/MIR pipeline: 12%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 53%**
+**Overall: 56%**
 
 ## Current work item
 
 Current work item definition:
-- add if-branch ownership state checking
-- reject mismatched moved state across branches
+- add while-loop ownership state checking
+- reject mismatched moved state across loop boundary
 
 **Current work item: 100%**

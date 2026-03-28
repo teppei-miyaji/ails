@@ -61,6 +61,7 @@ Type checker support currently includes:
 - move-while-borrowed rejection
 - first borrow/update conflict rejection
 - first branch ownership-state checking
+- first loop ownership-state checking
 
 ## Not implemented yet
 

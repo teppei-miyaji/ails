@@ -71,6 +71,9 @@ pub enum TypeCheckError {
 
     #[error("ownership state mismatch across branches for `{name}` in function `{function}`")]
     BranchStateMismatch { function: String, name: String },
+
+    #[error("ownership state mismatch across loop boundary for `{name}` in function `{function}`")]
+    LoopStateMismatch { function: String, name: String },
 }
 
 pub fn check_module(module: &Module) -> Result<(), TypeCheckError> {
@@ -232,8 +235,10 @@ fn check_stmt(
                     found: cond_ty,
                 });
             }
+            let before_loop = locals.clone();
             let mut body_locals = locals.clone();
             let _ = check_block(body, &mut body_locals, function_name, ret_ty, funcs)?;
+            merge_loop_states(locals, &before_loop, &body_locals, function_name)?;
             Ok(false)
         }
         Stmt::Match { scrutinee, arms } => check_match(scrutinee, arms, locals, function_name, ret_ty, funcs),
@@ -271,6 +276,41 @@ fn merge_branch_states(
 
         base_state.moved = then_state.moved;
         base_state.borrowed_view_count = then_state.borrowed_view_count;
+    }
+    Ok(())
+}
+
+fn merge_loop_states(
+    base: &mut BTreeMap<String, LocalState>,
+    before_loop: &BTreeMap<String, LocalState>,
+    after_body: &BTreeMap<String, LocalState>,
+    function_name: &str,
+) -> Result<(), TypeCheckError> {
+    for (name, base_state) in base.iter_mut() {
+        let before = before_loop.get(name).ok_or_else(|| TypeCheckError::LoopStateMismatch {
+            function: function_name.to_string(),
+            name: name.clone(),
+        })?;
+        let after = after_body.get(name).ok_or_else(|| TypeCheckError::LoopStateMismatch {
+            function: function_name.to_string(),
+            name: name.clone(),
+        })?;
+
+        if before.moved != after.moved {
+            return Err(TypeCheckError::LoopStateMismatch {
+                function: function_name.to_string(),
+                name: name.clone(),
+            });
+        }
+        if before.borrowed_view_count != after.borrowed_view_count {
+            return Err(TypeCheckError::LoopStateMismatch {
+                function: function_name.to_string(),
+                name: name.clone(),
+            });
+        }
+
+        base_state.moved = before.moved;
+        base_state.borrowed_view_count = before.borrowed_view_count;
     }
     Ok(())
 }

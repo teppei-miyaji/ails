@@ -41,3 +41,8 @@
 - Add first ownership-state merge check across `if` branches
 - Reject mismatched moved state across branches
 - Reject mismatched borrow count across branches
+
+## 0.1.0-draft-v0.12
+- Add first ownership-state merge check across `while` loop boundaries
+- Reject mismatched moved state across loop entry/body boundary
+- Reject mismatched borrow count across loop entry/body boundary

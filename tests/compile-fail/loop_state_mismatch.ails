@@ -1,0 +1,13 @@
+module demo.loop_state_mismatch
+
+func bad
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    while false
+    begin
+        let y: own i32 = x
+    end
+    return x
+end

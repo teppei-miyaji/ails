@@ -34,6 +34,7 @@ Public draft repository with:
 - [x] Add `let` / `set`
 - [x] Add first borrow/update conflict rejection
 - [x] Add first branch ownership-state checking
+- [x] Add first loop ownership-state checking
 - [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
@@ -41,7 +42,7 @@ Public draft repository with:
 - [ ] Emit clearer diagnostics for ownership errors
 - [ ] Generalize `match` to named sum types
 - [ ] Refine branch merge rules beyond exact equality
-- [ ] Add loop-state ownership checking
+- [ ] Refine loop merge rules beyond exact equality
 
 ### P2
 - [ ] Lower AST into non-placeholder HIR

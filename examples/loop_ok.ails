@@ -1,0 +1,13 @@
+module demo.loop_ok
+
+func keep
+    input x: own i32
+    output own i32
+    effect pure
+begin
+    while false
+    begin
+        let y: i32 = 1
+    end
+    return x
+end
