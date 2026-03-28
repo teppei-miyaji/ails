@@ -63,6 +63,26 @@ Current canonical position:
 v0.1 does **not** require MIR to encode a full linear type proof.
 It only requires MIR to be suitable for a later drop-insertion and validation pipeline.
 
-## 7. Planned drop insertion
+## 7. v0.19 drop insertion strategy boundary
+
+For v0.19, the canonical drop insertion strategy is defined only at the level of placement classes, not a full algorithm.
+
+Drop placement classes:
+- scope-exit drops
+- explicit return-path drops
+- branch/loop edge drops when required to preserve ownership correctness
+- critical-edge related placement after CFG shaping or edge splitting, if needed by the implementation
+
+What is canonical:
+- drop insertion happens after MIR lowering
+- drop insertion may require CFG refinement such as edge splitting
+- implementations must preserve semantic ownership obligations across all control-flow exits
+
+What is not yet canonical:
+- exact block-splitting algorithm
+- optimal drop placement
+- backend-specific destruction lowering
+
+## 8. Planned drop insertion
 
 Drop insertion is not part of current canonical MIR, but will be a post-lowering pass.

@@ -137,3 +137,8 @@ The repository now contains a reviewable canonical spec milestone under `spec/`,
 ## v0.18 review focus
 
 v0.18 tightens pattern payload ownership, forbids `view` return types for v0.1, and clarifies MIR drop responsibility boundaries.
+
+
+## v0.19 review focus
+
+v0.19 formalizes payload-less scrutinee consumption, left-to-right call evaluation for borrow legality, and MIR drop placement strategy boundaries.

@@ -63,7 +63,19 @@ That means:
 
 If a future revision wants partial move, it must introduce it explicitly.
 
-## 6. View scrutinee limitation
+## 6. Scrutinee consumption rule for payload-less cases
+
+In v0.19, by-value `match` consumes the scrutinee as a whole, regardless of whether the selected arm binds a payload.
+
+This means:
+- `case none`
+- `case a` where `a` has zero payload fields
+
+still consume the matched scrutinee when the scrutinee is matched by value.
+
+As a result, after a by-value `match`, the original scrutinee must be considered unavailable for reuse in all arms and after the match.
+
+## 7. View scrutinee limitation
 
 Pattern matching over a `view`-wrapped scrutinee is not canonicalized for payload extraction.
 
@@ -71,14 +83,14 @@ For v0.1:
 - implementations may allow case discrimination without payload extraction
 - implementations must reject payload-binding forms that would require borrow-vs-move choice from a `view` scrutinee
 
-## 7. Duplicate and invalid patterns
+## 8. Duplicate and invalid patterns
 
 Within one `match`:
 - duplicate cases are invalid
 - unknown named cases are invalid
 - non-exhaustive coverage is invalid
 
-## 8. Future extension point
+## 9. Future extension point
 
 A future revision may introduce explicit syntax for:
 - borrow-binding payloads

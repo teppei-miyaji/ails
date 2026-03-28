@@ -39,7 +39,10 @@ Public draft repository with:
 - [x] Add abstract named sum layout document
 - [x] Add HIR/MIR validation responsibility mapping
 - [x] Clarify MIR drop responsibility boundary
-- [ ] Obtain external review for v0.18 canonical spec
+- [x] Formalize scrutinee consumption for payload-less by-value match
+- [x] Define left-to-right evaluation order for call-borrow legality
+- [x] Define MIR drop insertion strategy at placement-class level
+- [ ] Obtain external review for v0.19 canonical spec
 
 ### P1
 - [ ] Align Rust implementation names and structure with canonical spec terminology

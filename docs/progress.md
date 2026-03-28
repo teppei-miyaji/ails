@@ -15,20 +15,20 @@
 
 - Public repository / packaging / licensing: 100%
 - Front-end baseline: 100%
-- Canonical spec set: 86%
-- Ownership-aware type system: 66%
-- HIR/MIR pipeline: 54%
+- Canonical spec set: 91%
+- Ownership-aware type system: 70%
+- HIR/MIR pipeline: 58%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 86%**
+**Overall: 89%**
 
 ## Current work item
 
 Current work item definition:
-- close major review ambiguities
-- prepare review-ready v0.18 canonical spec
-- make review prompts and boundaries explicit
+- close payload-less case ownership ambiguity
+- close borrow-chain evaluation ambiguity
+- define MIR drop strategy boundary for next-stage implementation
 
 **Current work item: 100%**

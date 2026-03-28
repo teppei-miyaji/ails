@@ -80,3 +80,9 @@
 - Forbid `view` return types in v0.1
 - Clarify MIR drop responsibility as a post-lowering pass boundary
 - Add repository-local Gemini review prompt for v0.18 spec review
+
+## 0.1.0-draft-v0.19
+- Formalize by-value scrutinee consumption for payload-less match cases
+- Define left-to-right call evaluation for borrow legality
+- Define MIR drop insertion strategy at placement-class granularity
+- Add repository-local Gemini review prompt for v0.19 spec review

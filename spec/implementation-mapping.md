@@ -26,6 +26,7 @@ Responsible for:
 - ownership legality at source-level
 - branch/loop join validation
 - v0.1 prohibition of `view` return types
+- call-argument left-to-right borrow legality
 
 Not responsible for:
 - CFG construction
@@ -44,9 +45,14 @@ Responsible for:
 - block/terminator validity
 - representation suitable for later validation and backend stages
 
+### Post-MIR drop insertion
+Responsible for:
+- inserting explicit drop actions
+- refining CFG when needed for drop placement
+- preserving ownership obligations on all exits
+
 Not responsible for:
-- deciding final physical backend layout
-- silently inventing ownership semantics absent from spec
+- silently inventing source-level ownership semantics absent from spec
 
 ## Rule
 

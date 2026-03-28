@@ -1,13 +1,13 @@
 # AILS Diagnostics Specification
 
-## Principle
+## 1. Principle
 
 Diagnostics must prefer:
 - explicit cause
 - explicit location
 - explicit expected vs found information
 
-## Required categories
+## 2. Required categories
 
 - parse errors
 - unknown identifier / function / type
@@ -17,6 +17,22 @@ Diagnostics must prefer:
 - ownership misuse
 - control-flow join state mismatch
 
-## AI-friendly diagnostics
+## 3. AI-friendly diagnostics
 
-Diagnostics should be stable and machine-readable enough that an AI can identify the failing rule and generate a targeted fix.
+Diagnostics should be stable and machine-readable enough that an AI can:
+- identify the failing rule
+- identify the source binding name
+- generate a targeted fix
+
+## 4. Additional v0.19 guidance
+
+When partial move is forbidden, diagnostics should explicitly state:
+- that partial move is not part of v0.1 canonical semantics
+- whether the value was consumed by by-value `match`
+- which binding became unavailable
+
+## 5. Avoid
+
+- vague panic-only behavior
+- context-free one-word messages
+- diagnostics that omit the binding or rule name
