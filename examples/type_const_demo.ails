@@ -1,0 +1,29 @@
+module demo.type_const_demo
+
+import demo.common
+
+type response is
+case ok
+    field value: i32
+case err
+    field code: i32
+end
+
+const default_code: i32 = 7
+
+func unwrap
+    input r: response
+    output i32
+    effect pure
+begin
+    match r
+    case ok value
+    begin
+        return value
+    end
+    case err code
+    begin
+        return default_code
+    end
+    end
+end

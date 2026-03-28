@@ -10,6 +10,11 @@ Public draft repository with:
 - initial MIR lowering
 - minimal type checker
 - CLI driver
+- `import`
+- `type`
+- `case`
+- `field`
+- `const`
 - `let`
 - `set`
 - `if`
@@ -39,12 +44,13 @@ Public draft repository with:
 - [x] Replace placeholder HIR with real lowered structures
 - [x] Add initial MIR data structures
 - [x] Lower `if` / `while` / `match` into MIR CFG form
+- [x] Add `import` / `type` / `case` / `field` / `const`
+- [x] Generalize `match` to named sum types
 - [ ] Add compile-pass / compile-fail ownership examples beyond scalar cases
 
 ### P1
 - [ ] Add `view` borrow creation semantics for pattern bindings
 - [ ] Emit clearer diagnostics for ownership errors
-- [ ] Generalize `match` to named sum types
 - [ ] Refine branch merge rules beyond exact equality
 - [ ] Refine loop merge rules beyond exact equality
 - [ ] Add drop insertion pass

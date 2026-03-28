@@ -3,6 +3,12 @@ use thiserror::Error;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenKind {
     Module,
+    Import,
+    Type,
+    Is,
+    Case,
+    Field,
+    Const,
     Func,
     Input,
     Output,
@@ -17,7 +23,6 @@ pub enum TokenKind {
     Else,
     While,
     Match,
-    Case,
     Pure,
     Io,
     Alloc,
@@ -129,6 +134,12 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                 let text = &input[start..i];
                 let kind = match text {
                     "module" => TokenKind::Module,
+                    "import" => TokenKind::Import,
+                    "type" => TokenKind::Type,
+                    "is" => TokenKind::Is,
+                    "case" => TokenKind::Case,
+                    "field" => TokenKind::Field,
+                    "const" => TokenKind::Const,
                     "func" => TokenKind::Func,
                     "input" => TokenKind::Input,
                     "output" => TokenKind::Output,
@@ -143,7 +154,6 @@ pub fn lex(input: &str) -> Result<Vec<Token>, LexError> {
                     "else" => TokenKind::Else,
                     "while" => TokenKind::While,
                     "match" => TokenKind::Match,
-                    "case" => TokenKind::Case,
                     "pure" => TokenKind::Pure,
                     "io" => TokenKind::Io,
                     "alloc" => TokenKind::Alloc,

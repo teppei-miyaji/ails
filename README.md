@@ -28,6 +28,9 @@ It is intended to be published as a public GitHub repository and evolved increme
 Parser support currently includes:
 
 - `module`
+- `import`
+- `type` / `case` / `field`
+- `const`
 - `func`
 - `input`
 - `output`
@@ -38,6 +41,7 @@ Parser support currently includes:
 - `if ... then ... else`
 - `while`
 - `match`
+- named sum type matching
 - `result` types
 - `option` types
 - `own` types
@@ -50,7 +54,7 @@ Parser support currently includes:
 
 Type checker support currently includes:
 
-- duplicate function detection
+- duplicate type/function/const detection
 - duplicate parameter detection
 - unknown identifier detection
 - basic integer expression typing

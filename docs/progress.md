@@ -13,20 +13,20 @@
 ## Estimated project progress
 
 - Public repository / packaging / licensing: 100%
-- Front-end baseline: 82%
-- Ownership-aware type system: 50%
-- HIR/MIR pipeline: 42%
+- Front-end baseline: 100%
+- Ownership-aware type system: 58%
+- HIR/MIR pipeline: 46%
 - Backend / executable generation: 0%
 
 ## Estimated overall progress to first meaningful MVP
 
-**Overall: 67%**
+**Overall: 74%**
 
 ## Current work item
 
 Current work item definition:
-- add MIR data structures
-- lower HIR into CFG-shaped MIR
-- expose MIR dump from driver
+- add remaining top-level front-end syntax
+- add named sum type declarations
+- generalize `match` to user-defined sum types
 
 **Current work item: 100%**

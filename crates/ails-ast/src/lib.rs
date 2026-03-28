@@ -1,7 +1,35 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Module {
     pub name: String,
+    pub imports: Vec<String>,
+    pub types: Vec<TypeDecl>,
+    pub consts: Vec<ConstDecl>,
     pub functions: Vec<Function>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TypeDecl {
+    pub name: String,
+    pub cases: Vec<CaseDecl>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CaseDecl {
+    pub name: String,
+    pub fields: Vec<FieldDecl>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FieldDecl {
+    pub name: String,
+    pub ty: TypeExpr,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ConstDecl {
+    pub name: String,
+    pub ty: TypeExpr,
+    pub expr: Expr,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

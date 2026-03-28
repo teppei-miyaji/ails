@@ -1,4 +1,4 @@
-use ails_ast::{BinaryOp, Effect, Expr, Function, MatchArm, Module, Param, Pattern, PrimitiveType, Stmt, TypeExpr};
+use ails_ast::{BinaryOp, CaseDecl, ConstDecl, Effect, Expr, FieldDecl, Function, MatchArm, Module, Param, Pattern, PrimitiveType, Stmt, TypeDecl, TypeExpr};
 use ails_lexer::{lex, Token, TokenKind};
 use thiserror::Error;
 
@@ -31,15 +31,103 @@ impl Parser {
         self.expect_newline()?;
         self.skip_newlines();
 
-        let mut functions = Vec::new();
-        while !self.at_eof() {
-            self.skip_newlines();
-            if self.at_eof() { break; }
-            functions.push(self.parse_function()?);
+        let mut imports = Vec::new();
+        while matches!(self.peek(), TokenKind::Import) {
+            imports.push(self.parse_import()?);
             self.skip_newlines();
         }
 
-        Ok(Module { name, functions })
+        let mut types = Vec::new();
+        let mut consts = Vec::new();
+        let mut functions = Vec::new();
+
+        while !self.at_eof() {
+            self.skip_newlines();
+            if self.at_eof() { break; }
+            match self.peek() {
+                TokenKind::Type => types.push(self.parse_type_decl()?),
+                TokenKind::Const => consts.push(self.parse_const_decl()?),
+                TokenKind::Func => functions.push(self.parse_function()?),
+                other => return Err(ParseError::Expected {
+                    expected: "`type`, `const`, `func`, or EOF",
+                    found: other.clone(),
+                    index: self.index,
+                }),
+            }
+            self.skip_newlines();
+        }
+
+        Ok(Module { name, imports, types, consts, functions })
+    }
+
+    fn parse_import(&mut self) -> Result<String, ParseError> {
+        self.expect_keyword(TokenKind::Import, "`import`")?;
+        let name = self.parse_qualified_name()?;
+        self.expect_newline()?;
+        Ok(name)
+    }
+
+    fn parse_type_decl(&mut self) -> Result<TypeDecl, ParseError> {
+        self.expect_keyword(TokenKind::Type, "`type`")?;
+        let name = self.parse_ident()?;
+        self.expect_keyword(TokenKind::Is, "`is`")?;
+        self.expect_newline()?;
+        let mut cases = Vec::new();
+        loop {
+            self.skip_newlines();
+            match self.peek() {
+                TokenKind::Case => cases.push(self.parse_case_decl()?),
+                TokenKind::End => break,
+                other => return Err(ParseError::Expected {
+                    expected: "`case` or `end`",
+                    found: other.clone(),
+                    index: self.index,
+                }),
+            }
+        }
+        self.expect_keyword(TokenKind::End, "`end`")?;
+        self.expect_optional_newline();
+        Ok(TypeDecl { name, cases })
+    }
+
+    fn parse_case_decl(&mut self) -> Result<CaseDecl, ParseError> {
+        self.expect_keyword(TokenKind::Case, "`case`")?;
+        let name = self.parse_ident()?;
+        self.expect_newline()?;
+        let mut fields = Vec::new();
+        loop {
+            self.skip_newlines();
+            match self.peek() {
+                TokenKind::Field => fields.push(self.parse_field_decl()?),
+                TokenKind::Case | TokenKind::End => break,
+                other => return Err(ParseError::Expected {
+                    expected: "`field`, `case`, or `end`",
+                    found: other.clone(),
+                    index: self.index,
+                }),
+            }
+        }
+        Ok(CaseDecl { name, fields })
+    }
+
+    fn parse_field_decl(&mut self) -> Result<FieldDecl, ParseError> {
+        self.expect_keyword(TokenKind::Field, "`field`")?;
+        let name = self.parse_ident()?;
+        self.expect_keyword(TokenKind::Colon, "`:`")?;
+        let ty = self.parse_type()?;
+        self.expect_newline()?;
+        Ok(FieldDecl { name, ty })
+    }
+
+    fn parse_const_decl(&mut self) -> Result<ConstDecl, ParseError> {
+        self.expect_keyword(TokenKind::Const, "`const`")?;
+        let name = self.parse_ident()?;
+        self.expect_keyword(TokenKind::Colon, "`:`")?;
+        let ty = self.parse_type()?;
+        self.expect_keyword(TokenKind::Eq, "`=`")?;
+        let expr = self.parse_expr()?;
+        self.expect_newline()?;
+        Ok(ConstDecl { name, ty, expr })
     }
 
     fn parse_function(&mut self) -> Result<Function, ParseError> {

@@ -57,3 +57,9 @@
 - Lower HIR functions into block-based MIR
 - Lower `if`, `while`, and `match` into CFG-style terminators
 - Add `mir` driver subcommand
+
+## 0.1.0-draft-v0.15
+- Add parser support for `import`, `type`, `case`, `field`, and `const`
+- Extend AST/HIR/MIR module-level metadata for imports, types, and consts
+- Add type registry and const registry to type checker
+- Generalize `match` exhaustiveness checking to user-defined sum types

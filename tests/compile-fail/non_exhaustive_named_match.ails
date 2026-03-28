@@ -1,0 +1,19 @@
+module demo.non_exhaustive_named_match
+
+type token is
+case a
+case b
+end
+
+func bad
+    input t: token
+    output i32
+    effect pure
+begin
+    match t
+    case a
+    begin
+        return 1
+    end
+    end
+end
