@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AIIS AILS Review Result v0.1.1",
+  "type": "object",
+  "required": [
+    "case_id",
+    "source_commit",
+    "profile",
+    "resource_capabilities",
+    "resource_access_path",
+    "semantic_result"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^X0[1-6]$"
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "profile": {
+      "const": "aiis.ails.review@0.1.1"
+    },
+    "resource_capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "github_repository",
+        "github_pull_request",
+        "raw_http",
+        "google_drive",
+        "user_attachment"
+      ],
+      "properties": {
+        "github_repository": {
+          "enum": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "github_pull_request": {
+          "enum": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "raw_http": {
+          "enum": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "google_drive": {
+          "enum": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "user_attachment": {
+          "enum": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        }
+      }
+    },
+    "resource_access_path": {
+      "enum": [
+        "GITHUB",
+        "RAW_HTTP",
+        "GOOGLE_DRIVE",
+        "USER_ATTACHMENT",
+        "INLINE_TEXT",
+        "NONE"
+      ]
+    },
+    "semantic_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_category",
+        "finding_code",
+        "severity",
+        "spec_violation",
+        "implementation_status",
+        "proposed_change",
+        "validation_command",
+        "validation_result",
+        "review_decision",
+        "confidence",
+        "execute_allowed",
+        "evidence_refs"
+      ],
+      "properties": {
+        "finding_category": {
+          "enum": [
+            "CANONICAL_AUTHORITY",
+            "MIR_STRUCTURAL_ERROR",
+            "VALIDATION_STATUS",
+            "CHANGE_PROPOSAL",
+            "SEMANTIC_EQUIVALENCE",
+            "RESOURCE_CAPABILITY"
+          ]
+        },
+        "finding_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
+        },
+        "spec_violation": {
+          "enum": [
+            "TRUE",
+            "FALSE",
+            "UNKNOWN"
+          ]
+        },
+        "implementation_status": {
+          "enum": [
+            "VERIFIED",
+            "UNVERIFIED",
+            "STALE",
+            "UNKNOWN"
+          ]
+        },
+        "proposed_change": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "validation_command": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "validation_result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "UNKNOWN",
+            "NOT_RUN"
+          ]
+        },
+        "review_decision": {
+          "enum": [
+            "ACCEPT",
+            "NO_CHANGE",
+            "CHANGE_REQUIRED",
+            "NEEDS_EVIDENCE"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "pattern": "^(0|1|0\\.[0-9]+)$"
+        },
+        "execute_allowed": {
+          "type": "boolean"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

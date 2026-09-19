@@ -1,0 +1,8 @@
+module test.aiis_interop_invalid
+
+func main
+    output i32
+    effect pure
+begin
+    return true
+end

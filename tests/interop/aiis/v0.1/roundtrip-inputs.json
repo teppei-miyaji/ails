@@ -1,0 +1,99 @@
+{
+  "suite_id": "ails-aiis-roundtrip-v0.1",
+  "profile": "aiis.ails.review@0.1",
+  "canonicalization": "aiis-c14n-json/0.3.1",
+  "expected_answers_in_public_package": false,
+  "vectors": [
+    {
+      "id": "R01",
+      "semantic_record": {
+        "finding_category": "CANONICAL_AUTHORITY",
+        "severity": "INFO",
+        "spec_violation": "FALSE",
+        "implementation_status": "VERIFIED",
+        "proposed_change": null,
+        "validation_command": null,
+        "validation_result": "NOT_RUN",
+        "review_decision": "NO_CHANGE",
+        "confidence": "1.0",
+        "execute_allowed": false,
+        "evidence_refs": [
+          "spec/README.md"
+        ]
+      }
+    },
+    {
+      "id": "R02",
+      "semantic_record": {
+        "finding_category": "MIR_STRUCTURAL_ERROR",
+        "severity": "MEDIUM",
+        "spec_violation": "TRUE",
+        "implementation_status": "VERIFIED",
+        "proposed_change": null,
+        "validation_command": null,
+        "validation_result": "FAIL",
+        "review_decision": "CHANGE_REQUIRED",
+        "confidence": "0.820",
+        "execute_allowed": false,
+        "evidence_refs": [
+          "crates/ails-mir/src/validator.rs",
+          "spec/mir.md"
+        ]
+      }
+    },
+    {
+      "id": "R03",
+      "semantic_record": {
+        "finding_category": "VALIDATION_STATUS",
+        "severity": "INFO",
+        "spec_violation": "UNKNOWN",
+        "implementation_status": "UNVERIFIED",
+        "proposed_change": "Add one new MIR structural validator check.",
+        "validation_command": "cargo test",
+        "validation_result": "UNKNOWN",
+        "review_decision": "NEEDS_EVIDENCE",
+        "confidence": "0.7000",
+        "execute_allowed": false,
+        "evidence_refs": [
+          "docs/gemini_review_prompt_v0_25_driver.md"
+        ]
+      }
+    },
+    {
+      "id": "R04",
+      "semantic_record": {
+        "finding_category": "CHANGE_PROPOSAL",
+        "severity": "LOW",
+        "spec_violation": "FALSE",
+        "implementation_status": "UNVERIFIED",
+        "proposed_change": "Reject a MIR function whose entry block id 0 is missing.",
+        "validation_command": null,
+        "validation_result": "NOT_RUN",
+        "review_decision": "ACCEPT",
+        "confidence": "0.900",
+        "execute_allowed": false,
+        "evidence_refs": [
+          "spec/mir.md"
+        ]
+      }
+    },
+    {
+      "id": "R05",
+      "semantic_record": {
+        "finding_category": "SEMANTIC_EQUIVALENCE",
+        "severity": "INFO",
+        "spec_violation": "TRUE",
+        "implementation_status": "VERIFIED",
+        "proposed_change": null,
+        "validation_command": null,
+        "validation_result": "FAIL",
+        "review_decision": "CHANGE_REQUIRED",
+        "confidence": "-0.0",
+        "execute_allowed": false,
+        "evidence_refs": [
+          "crates/ails-mir/src/validator.rs"
+        ]
+      }
+    }
+  ]
+}

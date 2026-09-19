@@ -1,0 +1,233 @@
+{
+  "profile_id": "aiis.ails.review@0.1.1",
+  "based_on": {
+    "protocol": "0.3.1",
+    "canonicalization": "aiis-c14n-json/0.3.1",
+    "canonical_fallback_codec": "canonical-json/0.3.1",
+    "base_semantic_hash": "sha256:41ec325ea6274fde44cc92dc640ea62971952edb24414f4b7831226aef65f96c"
+  },
+  "authority": {
+    "repository": "teppei-miyaji/ails",
+    "canonical_spec_root": "spec/"
+  },
+  "concepts": [
+    {
+      "id": "C1000",
+      "name": "repository",
+      "type": "string",
+      "required": true
+    },
+    {
+      "id": "C1001",
+      "name": "source_commit",
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "required": true
+    },
+    {
+      "id": "C1002",
+      "name": "canonical_authority",
+      "type": "string",
+      "required": true
+    },
+    {
+      "id": "C1003",
+      "name": "target_path",
+      "type": [
+        "string",
+        "null"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1010",
+      "name": "finding_category",
+      "type": "enum",
+      "values": [
+        "CANONICAL_AUTHORITY",
+        "MIR_STRUCTURAL_ERROR",
+        "VALIDATION_STATUS",
+        "CHANGE_PROPOSAL",
+        "SEMANTIC_EQUIVALENCE",
+        "RESOURCE_CAPABILITY"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1011",
+      "name": "severity",
+      "type": "enum",
+      "values": [
+        "INFO",
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1012",
+      "name": "spec_violation",
+      "type": "enum",
+      "values": [
+        "TRUE",
+        "FALSE",
+        "UNKNOWN"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1013",
+      "name": "implementation_status",
+      "type": "enum",
+      "values": [
+        "VERIFIED",
+        "UNVERIFIED",
+        "STALE",
+        "UNKNOWN"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1014",
+      "name": "finding_code",
+      "type": [
+        "string",
+        "null"
+      ],
+      "required": true,
+      "description": "Concrete machine-readable finding identifier. Preserve supplied validator/error identifiers exactly when authoritative for the case."
+    },
+    {
+      "id": "C1020",
+      "name": "proposed_change",
+      "type": [
+        "string",
+        "null"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1021",
+      "name": "validation_command",
+      "type": [
+        "string",
+        "null"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1022",
+      "name": "validation_result",
+      "type": "enum",
+      "values": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_RUN"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1030",
+      "name": "review_decision",
+      "type": "enum",
+      "values": [
+        "ACCEPT",
+        "NO_CHANGE",
+        "CHANGE_REQUIRED",
+        "NEEDS_EVIDENCE"
+      ],
+      "required": true
+    },
+    {
+      "id": "C1031",
+      "name": "confidence",
+      "type": "decimal-string",
+      "minimum": "0",
+      "maximum": "1",
+      "tolerance": "0.001",
+      "required": true
+    },
+    {
+      "id": "C1040",
+      "name": "execute_allowed",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "C1041",
+      "name": "evidence_refs",
+      "type": "array<string>",
+      "required": true
+    },
+    {
+      "id": "C1050",
+      "name": "resource_capabilities",
+      "type": "object",
+      "required": true,
+      "properties": {
+        "github_repository": {
+          "type": "enum",
+          "values": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "github_pull_request": {
+          "type": "enum",
+          "values": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "raw_http": {
+          "type": "enum",
+          "values": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "google_drive": {
+          "type": "enum",
+          "values": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "user_attachment": {
+          "type": "enum",
+          "values": [
+            "READ_WRITE",
+            "READ_ONLY",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "additional_properties": false
+    },
+    {
+      "id": "C1051",
+      "name": "resource_access_path",
+      "type": "enum",
+      "values": [
+        "GITHUB",
+        "RAW_HTTP",
+        "GOOGLE_DRIVE",
+        "USER_ATTACHMENT",
+        "INLINE_TEXT",
+        "NONE"
+      ],
+      "required": true
+    }
+  ]
+}
