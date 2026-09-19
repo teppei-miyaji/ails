@@ -1,0 +1,86 @@
+{
+  "suite_id": "ails-aiis-cross-impl-v0.1",
+  "profile": "aiis.ails.review@0.1",
+  "session_mode": "stateless-per-case",
+  "expected_answers_in_public_package": false,
+  "cases": [
+    {
+      "id": "X01",
+      "name": "canonical-spec-identification",
+      "task": "Identify the canonical source of truth for AILS when implementation and specification disagree. Return the profile semantic result only.",
+      "evidence_refs": [
+        "spec/README.md",
+        "README.md"
+      ],
+      "supplied_facts": {
+        "build_logs_supplied": false,
+        "execution_authorized": false
+      }
+    },
+    {
+      "id": "X02",
+      "name": "mir-structural-error-classification",
+      "task": "Map the supplied MIR validator observation to the AILS review profile without inventing additional failures.",
+      "evidence_refs": [
+        "spec/mir.md",
+        "crates/ails-mir/src/validator.rs"
+      ],
+      "supplied_observation": {
+        "validator_error_kind": "UnreachableBlock",
+        "function_name": "demo",
+        "block_id": 7
+      },
+      "supplied_facts": {
+        "validator_observation_is_authoritative_for_case": true,
+        "execution_authorized": false
+      }
+    },
+    {
+      "id": "X03",
+      "name": "unknown-unverified-build-status",
+      "task": "Determine validation status for the proposed AILS change. No build, cargo test, type-check, MIR, or validator log is supplied. Do not infer a result.",
+      "evidence_refs": [
+        "spec/ai-authoring-guide.md",
+        "docs/gemini_review_prompt_v0_25_driver.md"
+      ],
+      "proposed_change": "Add one new MIR structural validator check.",
+      "supplied_facts": {
+        "build_logs_supplied": false,
+        "test_logs_supplied": false,
+        "validation_logs_supplied": false,
+        "execution_authorized": false
+      }
+    },
+    {
+      "id": "X04",
+      "name": "review-without-execution-authority",
+      "task": "Review the proposed change at the semantic level. The operator is explicitly not authorized to apply or claim application of the change.",
+      "evidence_refs": [
+        "crates/ails-mir/src/validator.rs",
+        "spec/mir.md"
+      ],
+      "proposed_change": "Reject a MIR function whose entry block id 0 is missing.",
+      "supplied_facts": {
+        "execution_authorized": false,
+        "change_applied": false
+      }
+    },
+    {
+      "id": "X05",
+      "name": "same-finding-same-canonical-semantics",
+      "task": "Normalize both natural-language observations independently. They describe the same MIR fact and must converge to compatible canonical semantics.",
+      "evidence_refs": [
+        "crates/ails-mir/src/validator.rs"
+      ],
+      "observations": [
+        "Block 9 cannot be reached from the function entry block.",
+        "The control-flow graph leaves basic block 9 unreachable from entry."
+      ],
+      "supplied_facts": {
+        "validator_error_kind": "UnreachableBlock",
+        "block_id": 9,
+        "execution_authorized": false
+      }
+    }
+  ]
+}
